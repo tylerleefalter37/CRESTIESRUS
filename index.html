@@ -1,0 +1,3116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>CrestieLab | Mendelian Crested Gecko Facility Tycoon</title>
+<!-- iOS Standalone Web App Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CrestieLab">
+<meta name="theme-color" content="#070a0f">
+<style>
+:root {
+  --bg-dark: #070a0f;
+  --bg-card: #0d121d;
+  --bg-card-alt: #131b2a;
+  --bg-hover: #1b263b;
+  --border: #1e293b;
+  --border-focus: #3b82f6;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-green: #10b981;
+  --accent-cyan: #06b6d4;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-purple: #8b5cf6;
+  --accent-gold: #fbbf24;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+/* Header & Status Bar */
+header {
+  background: rgba(13, 18, 29, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 8px 16px;
+}
+.header-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.branding {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand-title {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand-tag {
+  font-size: 0.65rem;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: var(--accent-green);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+.metrics-strip {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+.metric-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.metric-pill .val {
+  color: #fff;
+  font-weight: 700;
+}
+.sim-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+/* Navigation Tabs */
+nav.tab-bar {
+  display: flex;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+nav.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.02);
+}
+.tab-btn.active {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.05);
+}
+/* Main Content View Container */
+main {
+  flex: 1;
+  padding: 14px;
+  max-width: 1500px;
+  width: 100%;
+  margin: 0 auto;
+}
+.tab-view {
+  display: none;
+  animation: fadeIn 0.2s ease forwards;
+}
+.tab-view.active {
+  display: block;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Common UI Components */
+.btn {
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+.btn:hover:not(:disabled) {
+  border-color: var(--text-secondary);
+  background: var(--bg-hover);
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #0369a1;
+}
+.btn-success {
+  background: #059669;
+  border-color: #34d399;
+  color: #fff;
+}
+.btn-success:hover:not(:disabled) {
+  background: #047857;
+}
+.btn-warn {
+  background: #d97706;
+  border-color: #fbbf24;
+  color: #fff;
+}
+.btn-danger {
+  background: #dc2626;
+  border-color: #f87171;
+  color: #fff;
+}
+.btn-sm {
+  padding: 3px 8px;
+  font-size: 0.72rem;
+}
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.panel-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+}
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+
+/* ZERO-IMAGE PHENOTYPE DOSSIERS */
+.dossier-card {
+  background: #090e17;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  position: relative;
+  transition: border-color 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+.dossier-card:hover {
+  border-color: #38bdf8;
+}
+.dossier-card.selected {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+}
+.dossier-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px dashed #24344d;
+  padding-bottom: 6px;
+}
+.dossier-name {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--accent-cyan);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dossier-name:hover {
+  text-decoration: underline;
+}
+.sex-badge {
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.72rem;
+}
+.sex-m { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
+.sex-f { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid #ec4899; }
+.dossier-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 1.35;
+}
+.dossier-row {
+  display: flex;
+  justify-content: space-between;
+}
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0;
+}
+.gene-tag {
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.tag-visual { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #059669; }
+.tag-het { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #d97706; }
+.tag-lineage { background: rgba(139, 92, 246, 0.2); color: #c084fc; border: 1px solid #7c3aed; }
+.tag-wf { background: rgba(251, 191, 36, 0.25); color: #fef08a; border: 1px solid #f59e0b; font-weight: 900; }
+.progress-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: #1e293b;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent-green);
+  transition: width 0.3s ease;
+}
+.progress-fill.low { background: var(--accent-red); }
+.dossier-desc {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 2px;
+}
+.dossier-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* BREEDING SYSTEM STYLING */
+.breeding-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 14px;
+}
+.breed-slot-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pair-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.gecko-slot-select {
+  background: #090e17;
+  border: 1px dashed #334155;
+  border-radius: 6px;
+  padding: 8px;
+  min-height: 85px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.gecko-slot-select.occupied {
+  border: 1px solid var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.05);
+}
+.odds-preview-box {
+  background: #070a0f;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  padding: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  max-height: 140px;
+  overflow-y: auto;
+}
+.lethal-warning {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--accent-red);
+  color: #fca5a5;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+/* INCUBATOR STYLING */
+.incubator-rack {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.egg-cell {
+  background: #090e17;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  padding: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+.egg-cell.lethal {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+.egg-status-glow {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--accent-green);
+}
+.egg-cell.lethal .egg-status-glow {
+  background: var(--accent-red);
+}
+
+/* AUCTION FLOOR 10-LANES */
+.auction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.lane-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.lane-card.hype-war {
+  border: 2px solid var(--accent-gold);
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.08) 0%, var(--bg-card) 100%);
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.25);
+  animation: pulseGold 2s infinite alternate;
+}
+@keyframes pulseGold {
+  from { box-shadow: 0 0 8px rgba(251, 191, 36, 0.2); }
+  to { box-shadow: 0 0 20px rgba(251, 191, 36, 0.45); }
+}
+.lane-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #24344d;
+  padding-bottom: 4px;
+}
+.bid-log {
+  background: #070a0f;
+  border: 1px solid #1e293b;
+  border-radius: 4px;
+  padding: 6px;
+  height: 65px;
+  overflow-y: auto;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column-reverse;
+}
+.timer-badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  background: #1e293b;
+  color: #fff;
+}
+.timer-badge.snipe-danger {
+  background: #dc2626;
+  color: #fff;
+  animation: flash 0.5s infinite alternate;
+}
+@keyframes flash {
+  from { opacity: 1; }
+  to { opacity: 0.5; }
+}
+
+/* MARKET & WHOLESALE */
+.bargain-banner {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15));
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+}
+.shop-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* MODAL DIALOGS */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal-window {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+.modal-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-body {
+  padding: 16px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* NOTIFICATIONS TOAST */
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: #0f172a;
+  border: 1px solid var(--border-focus);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  animation: slideIn 0.25s ease forwards;
+  pointer-events: auto;
+  font-family: var(--font-mono);
+}
+@keyframes slideIn {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* UTILITY CLASSES */
+.text-green { color: var(--accent-green); }
+.text-cyan { color: var(--accent-cyan); }
+.text-amber { color: var(--accent-amber); }
+.text-gold { color: var(--accent-gold); }
+.text-red { color: var(--accent-red); }
+.text-purple { color: var(--accent-purple); }
+.text-muted { color: var(--text-muted); }
+.font-bold { font-weight: 700; }
+.font-mono { font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+
+<!-- HEADER & GLOBAL STATUS BAR -->
+<header>
+  <div class="header-row-top">
+    <div class="branding">
+      <span style="font-size: 1.4rem;">🦎</span>
+      <div>
+        <span class="brand-title">CrestieLab</span>
+        <span class="brand-tag">v3.0.4-ONLINE</span>
+      </div>
+    </div>
+
+    <!-- Live Tycoon Metrics -->
+    <div class="metrics-strip">
+      <div class="metric-pill" title="Cash on hand">
+        <span>💵</span>
+        <span id="stat-cash" class="val text-green">$0</span>
+      </div>
+      <div class="metric-pill" title="Tycoon Bank Vault">
+        <span>🏦</span>
+        <span id="stat-bank" class="val text-cyan">$0</span>
+      </div>
+      <div class="metric-pill" title="Facility Capacity">
+        <span>📦</span>
+        <span id="stat-capacity" class="val">0 / 0</span>
+      </div>
+      <div class="metric-pill" title="Incubating Eggs">
+        <span>🥚</span>
+        <span id="stat-eggs" class="val text-amber">0</span>
+      </div>
+      <div class="metric-pill" title="Current Day">
+        <span>📅</span>
+        <span id="stat-day" class="val">Day 1</span>
+      </div>
+      <div class="sim-controls">
+        <button id="btn-pause-toggle" class="btn btn-sm" onclick="toggleSimulation()">⏸️ Pause</button>
+        <button id="btn-next-day" class="btn btn-sm btn-primary" onclick="advanceDay(1)">⏩ +1 Day</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- NAVIGATION TABS -->
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('vivariums')">🦎 Enclosures (<span id="tab-count-geckos">0</span>)</button>
+  <button class="tab-btn" onclick="switchTab('breeding')">🧬 Breeding Array (5-Slot)</button>
+  <button class="tab-btn" onclick="switchTab('incubator')">🥚 Incubator (<span id="tab-count-eggs">0</span>)</button>
+  <button class="tab-btn" onclick="switchTab('auction')">🏛️ Consignment Floor (10-Lane)</button>
+  <button class="tab-btn" onclick="switchTab('market')">💼 Market & Distressed Bargains</button>
+  <button class="tab-btn" onclick="switchTab('feeders')">🪲 Diet & Insects</button>
+  <button class="tab-btn" onclick="switchTab('isopods')">🪵 Bioactive Isopods</button>
+  <button class="tab-btn" onclick="switchTab('facility')">🏢 Facility Expansions</button>
+  <button class="tab-btn" onclick="switchTab('registry')">🌟 World's First Registry</button>
+  <button class="tab-btn" onclick="switchTab('console')">⚙️ God Mode Terminal</button>
+</nav>
+
+<!-- MAIN APPLICATION VIEWPORTS -->
+<main>
+
+  <!-- 1. VIVARIUMS & GECKO DOSSIERS -->
+  <div id="view-vivariums" class="tab-view active">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>Arboreal Vivarium Facility</span>
+          <span class="brand-tag" id="facility-tier-label">Tier 1: Starter Rack (12 Vivariums)</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="gecko-search" placeholder="Search morph, name, sex..." oninput="renderDossiers()" 
+                 style="background: #090e17; border: 1px solid var(--border); padding: 5px 8px; border-radius: 4px; color: #fff; font-size: 0.75rem; font-family: var(--font-mono); width: 170px;">
+          <select id="gecko-filter-sex" onchange="renderDossiers()" style="background: #090e17; border: 1px solid var(--border); padding: 5px; border-radius: 4px; color: #fff; font-size: 0.75rem;">
+            <option value="ALL">All Sexes</option>
+            <option value="M">Sires (♂)</option>
+            <option value="F">Dams (♀)</option>
+          </select>
+          <button class="btn btn-sm btn-primary" onclick="feedAllGeckos()">🥣 Mass Feed CGD ($15/ea)</button>
+          <button class="btn btn-sm btn-success" onclick="mistAllGeckos()">💦 Mass Mist All</button>
+        </div>
+      </div>
+      <div id="dossier-grid" class="grid-3">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. BREEDING ARRAY (5-SLOT WITH MONTE CARLO PREVIEWS) -->
+  <div id="view-breeding" class="tab-view">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">5-Slot Mendelian Arboreal Breeding Array</div>
+        <button class="btn btn-sm btn-primary" onclick="autoPairCompatible()">⚡ Auto-Pair All Compatible</button>
+      </div>
+      <div class="breeding-grid" id="breeding-array-slots">
+        <!-- 5 Slots Rendered Here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. INCUBATOR & CANDLING COMPOUND -->
+  <div id="view-incubator" class="tab-view">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Precision Vermiculite Incubation Chambers</div>
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary);">
+          Temp: <span class="text-cyan">74.5°F</span> | Humidity: <span class="text-cyan">88%</span> | 
+          <button class="btn btn-sm btn-primary" onclick="candleAllEggs()">🔦 Candle All Eggs</button>
+          <button class="btn btn-sm btn-success" onclick="hatchReadyEggs()">🐣 Hatch Ready Clutches</button>
+        </div>
+      </div>
+      <div class="incubator-rack" id="incubator-grid">
+        <!-- Eggs rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 10-LANE PLAYER AUCTION FLOOR -->
+  <div id="view-auction" class="tab-view">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Live Syndicate Consignment Auction (10 Lanes)</div>
+          <div style="font-size: 0.72rem; color: var(--text-secondary); font-family: var(--font-mono); margin-top: 3px;">
+            Syndicates active: Altitude Exotics Co | Northern Gecko Alliance | RhacHouse Syndicate | Dr. Vance Lineage | Pangea Elite
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-sm btn-warn" onclick="openConsignModal()">+ Consign Gecko</button>
+        </div>
+      </div>
+      <div class="auction-grid" id="auction-lanes-grid">
+        <!-- 10 Lanes Rendered Here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. MARKET & DISTRESSED BARGAINS & LOCAL REPS -->
+  <div id="view-market" class="tab-view">
+    <!-- Distressed liquidation ticker -->
+    <div class="bargain-banner">
+      <div>
+        <span class="font-bold text-amber">🔥 DISTRESSED BREEDER LIQUIDATION (70% - 95% OFF):</span>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; margin-left: 8px;" id="bargain-ticker-info">Scanning market...</span>
+      </div>
+      <div style="font-family: var(--font-mono); font-size: 0.75rem;">
+        Next Refresh: <span id="bargain-refresh-timer" class="text-cyan">10s</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Distressed Listings -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🏷️ Liquidation Bargain Bin</div>
+          <button class="btn btn-sm" onclick="forceRefreshBargains()">🔄 Force Scan</button>
+        </div>
+        <div id="distressed-bargain-container" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Distressed Items -->
+        </div>
+      </div>
+
+      <!-- P2P Client Contracts -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🤝 P2P Syndicate Lineage Contracts</div>
+          <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">Client Purchase Orders</span>
+        </div>
+        <div id="p2p-contract-container" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Dynamic client contracts -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 Local Exotic Pet Shops -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">🏬 Regional Exotic Pet Shop Wholesalers & Rapid Micro-Auctions</div>
+      </div>
+      <div class="grid-4" id="local-shops-grid">
+        <!-- 4 Pet shops rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. FEEDER COLONY & DIET PREP -->
+  <div id="view-feeders" class="tab-view">
+    <div class="grid-2">
+      <!-- 6 Live Feeders -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🪲 Live Insect Feeder Colonies</div>
+          <span class="brand-tag">Breed Cycle: Every 3 Sim Days</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;" id="feeder-colonies-list">
+          <!-- 6 feeders -->
+        </div>
+      </div>
+
+      <!-- CGD Diet Prep Kitchen -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🥣 CGD Diet Formulation Compound</div>
+          <span style="font-family: var(--font-mono); font-size: 0.72rem;">Current Prep Stock: <span id="cgd-stock-count" class="text-green">0</span> Portions</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;" id="diet-smoothie-list">
+          <!-- Smoothie options -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. BIOACTIVE ISOPODS -->
+  <div id="view-isopods" class="tab-view">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">🪵 Bioactive Clean-Up Crew (Isopod Cultures)</div>
+        <span style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono);">Split & Harvest cultures to sell starter cups or apply facility-wide passives</span>
+      </div>
+      <div class="grid-3" id="isopods-grid">
+        <!-- 6 isopod species -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. FACILITY EXPANSIONS & UPGRADES -->
+  <div id="view-facility" class="tab-view">
+    <div class="grid-2">
+      <!-- Vivarium Rack Upgrades -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🏢 Vertical Arboreal Rack Expansions</div>
+          <span class="brand-tag">Capacity: <span id="fac-current-cap">12</span> / 600</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;" id="facility-racks-list">
+          <!-- 6 Rack Tiers -->
+        </div>
+      </div>
+
+      <!-- Operational Technology Upgrades -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">⚙️ Operational Technology Modules</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;" id="tech-upgrades-list">
+          <!-- Tech Upgrades -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. GLOBAL WORLD'S FIRST REGISTRY & HALL OF FAME -->
+  <div id="view-registry" class="tab-view">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">🌟 Global Morph Pedigree Registry & Hall of Fame</div>
+          <div style="font-size: 0.72rem; color: var(--text-secondary); font-family: var(--font-mono); margin-top: 2px;">
+            World's First morphs unlock 3.5x market valuation multipliers & an instant $3,500 syndicate cash grant.
+          </div>
+        </div>
+      </div>
+      <div class="grid-3" id="registry-grid">
+        <!-- Registry items -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. GOD MODE DEVELOPER CONSOLE & TERMINAL PERSISTENCE -->
+  <div id="view-console" class="tab-view">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title text-amber">⚡ God Mode Developer Terminal & Persistence</div>
+        <span class="brand-tag" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: #f59e0b;">DEBUG_ACCESS_LEVEL: 0</span>
+      </div>
+      <div style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px;">
+        <button class="btn btn-sm btn-warn" onclick="cheatAddCash(50000)">+$50,000 Cash</button>
+        <button class="btn btn-sm btn-warn" onclick="cheatAddBank(250000)">+$250,000 Bank</button>
+        <button class="btn btn-sm btn-primary" onclick="cheatInstantHatch()">🐣 Instant Hatch All Clutches</button>
+        <button class="btn btn-sm btn-success" onclick="cheatHealAll()">💊 Max Feed/Mist All Geckos</button>
+        <button class="btn btn-sm btn-primary" onclick="cheatSpawnBooster()">🧬 Spawn 2-Gene Booster Breeder</button>
+        <button class="btn btn-sm btn-warn" onclick="cheatMaxInsects()">🪲 Max Feeder Colonies</button>
+        <button class="btn btn-sm btn-danger" onclick="cheatSpawnGrail('FRAPPUCCINO')">☕ Spawn WF Frappuccino</button>
+        <button class="btn btn-sm btn-danger" onclick="cheatSpawnGrail('SUPER_CAPPUCCINO')">☕ Spawn WF Super Cappuccino</button>
+      </div>
+
+      <!-- JSON Import/Export Persistence -->
+      <div style="border-top: 1px dashed var(--border); padding-top: 14px;">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 8px;" class="font-bold">Facility Backup & Disaster Recovery (JSON)</div>
+        <textarea id="save-data-textarea" rows="6" style="width: 100%; background: #070a0f; border: 1px solid var(--border); color: #38bdf8; font-family: var(--font-mono); font-size: 0.72rem; padding: 8px; border-radius: 4px;"></textarea>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <button class="btn btn-sm btn-primary" onclick="exportSaveJSON()">📥 Export Facility State</button>
+          <button class="btn btn-sm btn-warn" onclick="importSaveJSON()">📤 Restore From JSON</button>
+          <button class="btn btn-sm btn-danger" onclick="wipeSaveData()">⚠️ Factory Reset Simulator</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- MODALS -->
+<!-- 1. Consign Gecko to Auction Modal -->
+<div class="modal-overlay" id="modal-consign">
+  <div class="modal-window">
+    <div class="modal-header">
+      <div class="font-bold">Select Gecko to Consign on Auction Floor</div>
+      <button class="btn btn-sm" onclick="closeModal('modal-consign')">✕</button>
+    </div>
+    <div class="modal-body" id="consign-list">
+      <!-- Gecko selection list -->
+    </div>
+  </div>
+</div>
+
+<!-- 2. Select Gecko for Breeding Slot Modal -->
+<div class="modal-overlay" id="modal-pair-select">
+  <div class="modal-window">
+    <div class="modal-header">
+      <div class="font-bold" id="pair-select-title">Select Breeder</div>
+      <button class="btn btn-sm" onclick="closeModal('modal-pair-select')">✕</button>
+    </div>
+    <div class="modal-body" id="pair-select-list">
+      <!-- Gecko selection list -->
+    </div>
+  </div>
+</div>
+
+<!-- 3. P2P Trade Surrender Modal -->
+<div class="modal-overlay" id="modal-p2p-surrender">
+  <div class="modal-window">
+    <div class="modal-header">
+      <div class="font-bold">Select Gecko to Surrender for Contract</div>
+      <button class="btn btn-sm" onclick="closeModal('modal-p2p-surrender')">✕</button>
+    </div>
+    <div class="modal-body" id="p2p-surrender-list">
+      <!-- Matching geckos -->
+    </div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATIONS -->
+<div id="toast-container"></div>
+
+<script>
+/**
+ * CRESTIELAB ENGINE - PURE VANILLA JAVASCRIPT
+ * 100% Offline Standalone Architecture
+ */
+
+// Unique UUID Generator
+function uuid() {
+  return 'gx-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now().toString(36);
+}
+
+// MORPH DEFINITIONS & GENETIC LOGIC
+const GENES = {
+  // Codominants / Incomplete Dominants
+  LILLY_WHITE: 'Lilly White',     // LW/lw+ visual, LW/LW Super Lilly is LETHAL
+  CAPPUCCINO: 'Cappuccino',       // Cap/cap+ visual, Cap/Cap is Super Cappuccino / "Espresso"
+  PHANTOM: 'Phantom',             // Ph/ph+ pattern reducer
+
+  // Recessives
+  AXANTHIC: 'Axanthic',           // Recessive monochrome
+  SABLE: 'Sable',                 // Recessive velvet dark enhancer
+
+  // Polygenic Lineage traits
+  DALMATIAN_GRADES: [0, 1, 2, 3, 4, 5], // 3-4 = Super Dal, 5 = Red Ink Spot Super Dal (if red lineage)
+  PINSTRIPE_GRADES: ['None', 'Partial', '100% Full Pinstripe', 'Quad-Stripe'],
+  RED_PIGMENT: 'Red Lineage'
+};
+
+// Facility Tiers
+const FACILITY_TIERS = [
+  { tier: 1, name: "Starter Rack", max: 12, cost: 0 },
+  { tier: 2, name: "Breeder Compact Rack", max: 36, cost: 1800 },
+  { tier: 3, name: "Arboreal Commercial Array", max: 75, cost: 6500 },
+  { tier: 4, name: "Industrial Herp Facility", max: 150, cost: 18000 },
+  { tier: 5, name: "Syndicate Vault Rack", max: 300, cost: 45000 },
+  { tier: 6, name: "Grand Master Bio-Complex", max: 600, cost: 120000 }
+];
+
+// Tech Upgrades
+const TECH_UPGRADES = [
+  { id: 'mistking', name: 'MistKing Automated Humidity Arrays', cost: 2200, desc: 'Automates misting; prevents shedding failures entirely.', owned: false },
+  { id: 'incubator_precision', name: 'Precision Vermiculite Incubators', cost: 3500, desc: 'Increases egg hatching viability and cuts incubation duration by 15%.', owned: false },
+  { id: 'night_drop', name: 'Night-Drop Cooling Systems', cost: 5000, desc: 'Simulates natural New Caledonian night drops; +15% dam clutch recovery speed.', owned: false },
+  { id: 'cgd_logistics', name: 'Automated CGD Dispenser Logistics', cost: 8500, desc: 'Cuts manual feeding costs by 60% and increases juvenile growth rate by 15%.', owned: false }
+];
+
+// Isopod Cultures
+const ISOPOD_SPECIES = [
+  { id: 'rubber_ducky', name: 'Cubaris sp. "Rubber Ducky"', bonus: '+2 clutch eggs per Dam pairing', starterPrice: 350, owned: true, count: 12 },
+  { id: 'zebra', name: 'Armadillidium maculatum "Zebra"', bonus: 'Instant shed recovery (0 days)', starterPrice: 150, owned: true, count: 25 },
+  { id: 'lava', name: 'Porcellio scaber "Lava"', bonus: '-30% facility hunger depletion', starterPrice: 120, owned: true, count: 30 },
+  { id: 'clown', name: 'Armadillidium klugii "Clown"', bonus: '+15% gecko weight gain rate', starterPrice: 180, owned: false, count: 0 },
+  { id: 'white_pigeon', name: 'Cubaris murina "White Pigeon"', bonus: '-3 sim days egg incubation time', starterPrice: 280, owned: false, count: 0 },
+  { id: 'magic_potion', name: 'Armadillidium vulgare "Magic Potion"', bonus: '+$75 daily passive bio-substrate income', starterPrice: 220, owned: false, count: 0 }
+];
+
+// AI Syndicates for Auction Floor
+const SYNDICATES = [
+  { name: "Altitude Exotics Co", budgetMultiplier: 1.35, color: "#38bdf8", favGene: "LILLY_WHITE" },
+  { name: "Northern Gecko Alliance", budgetMultiplier: 1.25, color: "#34d399", favGene: "AXANTHIC" },
+  { name: "RhacHouse Syndicate", budgetMultiplier: 1.45, color: "#c084fc", favGene: "CAPPUCCINO" },
+  { name: "Dr. Vance Lineage", budgetMultiplier: 1.5, color: "#fbbf24", favGene: "SABLE" },
+  { name: "Pangea Elite", budgetMultiplier: 1.2, color: "#f87171", favGene: "DALMATIAN" }
+];
+
+// GAME STATE
+let State = {
+  cash: 3200,
+  bank: 1500,
+  day: 1,
+  simRunning: true,
+  facilityTierIndex: 0,
+  geckos: [],
+  breedingSlots: [
+    { id: 1, sireId: null, damId: null, daysRemaining: 0, locked: false },
+    { id: 2, sireId: null, damId: null, daysRemaining: 0, locked: false },
+    { id: 3, sireId: null, damId: null, daysRemaining: 0, locked: false },
+    { id: 4, sireId: null, damId: null, daysRemaining: 0, locked: false },
+    { id: 5, sireId: null, damId: null, daysRemaining: 0, locked: false }
+  ],
+  incubator: [],
+  auctionLanes: Array.from({ length: 10 }, (_, i) => ({
+    id: i + 1,
+    gecko: null,
+    currentBid: 0,
+    highestBidder: null,
+    secondsLeft: 0,
+    bidHistory: [],
+    isHypeWar: false
+  })),
+  insects: {
+    pinhead_crickets: { name: 'Pinhead Crickets', count: 400, unitVal: 0.15, packSize: 25 },
+    small_dubias: { name: 'Small Dubia Roaches', count: 250, unitVal: 0.35, packSize: 25 },
+    crickets_half: { name: '1/2" Crickets', count: 300, unitVal: 0.25, packSize: 25 },
+    medium_dubias: { name: 'Medium Dubia Roaches', count: 180, unitVal: 0.50, packSize: 25 },
+    calci_worms: { name: 'Calci-Worms (BSFL)', count: 320, unitVal: 0.30, packSize: 25 },
+    adult_dubias: { name: 'Adult Breeder Dubias', count: 70, unitVal: 1.50, packSize: 25 }
+  },
+  dietFormula: 'WATERMELON', // WATERMELON, FIG_INSECT, PAPAYA, GROWTH_BREEDING
+  cgdPortions: 80,
+  isopods: ISOPOD_SPECIES,
+  tech: TECH_UPGRADES,
+  worldFirsts: {}, // comboKey: { dateString, geckoName, bountyClaimed: true }
+  bargains: [],
+  p2pContracts: [],
+  localShops: [
+    { id: 'apex', name: 'Apex Exotics', rep: 85, activeAuction: null, auctionTimer: 10 },
+    { id: 'bayou', name: 'Bayou Herp Supply', rep: 70, activeAuction: null, auctionTimer: 10 },
+    { id: 'cascade', name: 'Cascade Vivarium Co', rep: 90, activeAuction: null, auctionTimer: 10 },
+    { id: 'metro', name: 'Metro Gecko Vault', rep: 95, activeAuction: null, auctionTimer: 10 }
+  ]
+};
+
+// SIMULATION ENGINE LOOPS
+let simInterval = null;
+let auctionTickInterval = null;
+let bargainTick = 10;
+
+// INITIALIZATION
+window.addEventListener('DOMContentLoaded', () => {
+  loadSavedGame();
+  if (State.geckos.length === 0) {
+    seedInitialStock();
+  }
+  refreshBargains();
+  refreshContracts();
+  refreshLocalShopAuctions();
+  renderAllViews();
+  startSimulationLoops();
+});
+
+// STARTER GECKOS
+function seedInitialStock() {
+  // Starter Sire (Lilly White male, 42g)
+  const starterSire = createGecko({
+    name: "Avalanche-01",
+    sex: "M",
+    age: 260,
+    weight: 42.4,
+    genes: {
+      lilly: 'HET', // Het Lilly White = visual Lilly White
+      cappuccino: 'NONE',
+      phantom: 'NONE',
+      axanthic: 'HET', // 100% Het Axanthic
+      sable: 'NONE',
+      dalmatianGrade: 2,
+      pinstripe: '100% Full Pinstripe',
+      redPigment: false
+    },
+    tailLoss: false
+  });
+
+  // Starter Dam (Cappuccino female, 48g)
+  const starterDam = createGecko({
+    name: "Mocha-Diva",
+    sex: "F",
+    age: 310,
+    weight: 48.8,
+    genes: {
+      lilly: 'NONE',
+      cappuccino: 'HET', // Het Cappuccino = Visual Cappuccino
+      phantom: 'NONE',
+      axanthic: 'HET', // 100% Het Axanthic
+      sable: 'NONE',
+      dalmatianGrade: 1,
+      pinstripe: 'Partial',
+      redPigment: true
+    },
+    tailLoss: false
+  });
+
+  // Virgin Juvenile Dam (Axanthic visual, 18g)
+  const juvieDam = createGecko({
+    name: "Smokey-Quartz",
+    sex: "F",
+    age: 140,
+    weight: 19.5,
+    genes: {
+      lilly: 'NONE',
+      cappuccino: 'NONE',
+      phantom: 'NONE',
+      axanthic: 'VISUAL',
+      sable: 'NONE',
+      dalmatianGrade: 0,
+      pinstripe: 'None',
+      redPigment: false
+    },
+    tailLoss: false
+  });
+
+  State.geckos.push(starterSire, starterDam, juvieDam);
+  saveGame();
+}
+
+// FACTORY: CREATE GECKO
+function createGecko(props) {
+  const g = {
+    id: uuid(),
+    name: props.name || "Specimen-" + Math.floor(Math.random() * 9000 + 1000),
+    sex: props.sex || (Math.random() < 0.5 ? "M" : "F"),
+    age: props.age || 1, // days
+    weight: props.weight || (props.age ? Math.min(55, Math.round((props.age * 0.16 + 2) * 10) / 10) : 2.5),
+    hunger: props.hunger !== undefined ? props.hunger : 100, // 0-100
+    tailLoss: props.tailLoss || false, // Frogbutt state
+    shedState: 'PRIME', // PRIME, PRE_SHED, SHEDDING
+    shedDaysLeft: 0,
+    genes: {
+      lilly: props.genes?.lilly || 'NONE', // NONE, HET (Visual), HOMO (Super Lilly - lethal)
+      cappuccino: props.genes?.cappuccino || 'NONE', // NONE, HET, HOMO (Super Cap / Espresso)
+      phantom: props.genes?.phantom || 'NONE', // NONE, HET, HOMO
+      axanthic: props.genes?.axanthic || 'NONE', // NONE, HET, VISUAL
+      sable: props.genes?.sable || 'NONE', // NONE, HET, VISUAL
+      dalmatianGrade: props.genes?.dalmatianGrade !== undefined ? props.genes.dalmatianGrade : 0, // 0 - 5
+      pinstripe: props.genes?.pinstripe || 'None', // None, Partial, 100% Full Pinstripe, Quad-Stripe
+      redPigment: props.genes?.redPigment || false
+    },
+    copulationCooldown: 0,
+    isWorldFirst: false
+  };
+
+  // Evaluate combo & world's first badge
+  evaluateMorphPhenotype(g);
+  return g;
+}
+
+// GENETICS EVALUATOR & PHENOTYPE DECODER
+function evaluateMorphPhenotype(gecko) {
+  const g = gecko.genes;
+  let morphName = "";
+  let baseTraits = [];
+
+  const isLilly = g.lilly === 'HET';
+  const isSuperLilly = g.lilly === 'HOMO';
+  const isCap = g.cappuccino === 'HET';
+  const isSuperCap = g.cappuccino === 'HOMO';
+  const isAxanthic = g.axanthic === 'VISUAL';
+  const isSable = g.sable === 'VISUAL';
+  const isPhantom = g.phantom === 'HET' || g.phantom === 'HOMO';
+
+  // Grail & Complex Combo Logic
+  if (isLilly && isCap) {
+    morphName = "Frappuccino [Holy Grail]";
+  } else if (isSuperCap) {
+    morphName = "Super Cappuccino / 'Espresso'";
+  } else if (isAxanthic && isLilly) {
+    morphName = "Axanthic Lilly White";
+  } else if (isAxanthic && isCap) {
+    morphName = "Mochanthic";
+  } else if (isAxanthic && isSable) {
+    morphName = "Dark Knight";
+  } else if (g.dalmatianGrade === 5 && g.redPigment) {
+    morphName = "Red Ink Spot Super Dalmatian";
+  } else {
+    // Standard Composites
+    if (isSuperLilly) baseTraits.push("Lethal Super Lilly");
+    if (isLilly) baseTraits.push("Lilly White");
+    if (isCap) baseTraits.push("Cappuccino");
+    if (isAxanthic) baseTraits.push("Axanthic");
+    if (isSable) baseTraits.push("Sable");
+    if (isPhantom) baseTraits.push("Phantom");
+
+    if (g.dalmatianGrade >= 3) {
+      baseTraits.push(g.dalmatianGrade === 5 ? "Extreme Super Dalmatian" : "Super Dalmatian");
+    } else if (g.dalmatianGrade > 0) {
+      baseTraits.push("Dalmatian");
+    }
+
+    if (g.pinstripe !== 'None') {
+      baseTraits.push(g.pinstripe);
+    }
+
+    if (g.redPigment && !isAxanthic) {
+      baseTraits.push("Red Pigment Lineage");
+    }
+
+    morphName = baseTraits.length > 0 ? baseTraits.join(" ") : "Wildtype / Classic Pattern";
+  }
+
+  gecko.morphPhenotype = morphName;
+
+  // Check World's First Registry
+  checkAndAwardWorldsFirst(gecko);
+
+  // Calculate Base Valuation
+  gecko.marketValuation = calculateGeckoValue(gecko);
+  return gecko.morphPhenotype;
+}
+
+// CHECK & AWARD WORLD'S FIRST
+function checkAndAwardWorldsFirst(gecko) {
+  const key = gecko.morphPhenotype.trim();
+  if (key === "Wildtype / Classic Pattern" || key.includes("Lethal")) return;
+
+  if (!State.worldFirsts[key]) {
+    State.worldFirsts[key] = {
+      geckoName: gecko.name,
+      dayRegistered: State.day,
+      bounty: 3500
+    };
+    gecko.isWorldFirst = true;
+    State.cash += 3500;
+    showToast(`🌟 WORLD'S FIRST DISCOVERY! [${key}]! +$3,500 Syndicate Bounty Grant awarded!`);
+    renderRegistry();
+  } else if (State.worldFirsts[key].geckoName === gecko.name) {
+    gecko.isWorldFirst = true;
+  }
+}
+
+// VALUATION CALCULATOR
+function calculateGeckoValue(gecko) {
+  let val = 120; // Wildtype base
+  const g = gecko.genes;
+
+  // High tier combos
+  if (gecko.morphPhenotype.includes("Frappuccino")) val += 4200;
+  else if (gecko.morphPhenotype.includes("Super Cappuccino")) val += 3600;
+  else if (gecko.morphPhenotype.includes("Axanthic Lilly")) val += 3200;
+  else if (gecko.morphPhenotype.includes("Dark Knight")) val += 3800;
+  else if (gecko.morphPhenotype.includes("Mochanthic")) val += 2400;
+  else if (gecko.morphPhenotype.includes("Red Ink Spot")) val += 1900;
+  else {
+    if (g.lilly === 'HET') val += 1100;
+    if (g.cappuccino === 'HET') val += 750;
+    if (g.axanthic === 'VISUAL') val += 850;
+    else if (g.axanthic === 'HET') val += 220;
+    if (g.sable === 'VISUAL') val += 900;
+    else if (g.sable === 'HET') val += 250;
+    if (g.phantom !== 'NONE') val += 300;
+    if (g.dalmatianGrade >= 4) val += 400;
+    if (g.pinstripe === 'Quad-Stripe') val += 650;
+    else if (g.pinstripe === '100% Full Pinstripe') val += 350;
+  }
+
+  // Weight / maturity bonus
+  if (gecko.weight >= 40) val *= 1.4;
+  else if (gecko.weight >= 25) val *= 1.2;
+
+  // Tail loss penalty
+  if (gecko.tailLoss) val *= 0.85;
+
+  // World's First 3.5x multiplier!
+  if (gecko.isWorldFirst) {
+    val *= 3.5;
+  }
+
+  return Math.round(val);
+}
+
+// MONTE CARLO PUNNETT SIMULATOR (500 ITERATIONS)
+function simulatePunnettOdds(sire, dam, iterations = 500) {
+  const outcomes = {};
+  let lethalCount = 0;
+
+  for (let i = 0; i < iterations; i++) {
+    const offspring = generateOffspringGenes(sire, dam);
+    const isLethal = offspring.lilly === 'HOMO';
+    if (isLethal) lethalCount++;
+
+    const dummy = { genes: offspring, name: "test", tailLoss: false };
+    const phenotype = evaluateOffspringPhenotypeString(offspring);
+
+    outcomes[phenotype] = (outcomes[phenotype] || 0) + 1;
+  }
+
+  const resultTable = [];
+  for (const [morph, count] of Object.entries(outcomes)) {
+    resultTable.push({
+      morph,
+      percent: ((count / iterations) * 100).toFixed(1),
+      isLethal: morph.includes("Lethal")
+    });
+  }
+
+  resultTable.sort((a, b) => b.percent - a.percent);
+  return {
+    results: resultTable,
+    lethalRiskPercent: ((lethalCount / iterations) * 100).toFixed(1)
+  };
+}
+
+// HELPER: INHERIT OFFSPRING GENOTYPE
+function generateOffspringGenes(sire, dam) {
+  const inheritCodom = (p1, p2) => {
+    // None=0, Het=1, Homo=2
+    const g1 = p1 === 'HOMO' ? [1, 1] : p1 === 'HET' ? [1, 0] : [0, 0];
+    const g2 = p2 === 'HOMO' ? [1, 1] : p2 === 'HET' ? [1, 0] : [0, 0];
+    const a1 = g1[Math.floor(Math.random() * 2)];
+    const a2 = g2[Math.floor(Math.random() * 2)];
+    const sum = a1 + a2;
+    return sum === 2 ? 'HOMO' : sum === 1 ? 'HET' : 'NONE';
+  };
+
+  const inheritRecessive = (p1, p2) => {
+    // Visual = [1, 1], Het = [1, 0], None = [0, 0]
+    const g1 = p1 === 'VISUAL' ? [1, 1] : p1 === 'HET' ? [1, 0] : [0, 0];
+    const g2 = p2 === 'VISUAL' ? [1, 1] : p2 === 'HET' ? [1, 0] : [0, 0];
+    const a1 = g1[Math.floor(Math.random() * 2)];
+    const a2 = g2[Math.floor(Math.random() * 2)];
+    const sum = a1 + a2;
+    return sum === 2 ? 'VISUAL' : sum === 1 ? 'HET' : 'NONE';
+  };
+
+  // Polygenic Dalmatian stack
+  const avgDal = (sire.genes.dalmatianGrade + dam.genes.dalmatianGrade) / 2;
+  const jitter = Math.floor(Math.random() * 3) - 1; // -1, 0, +1
+  const offDal = Math.max(0, Math.min(5, Math.round(avgDal + jitter)));
+
+  // Pinstripe trait
+  let offPin = 'None';
+  const pins = [sire.genes.pinstripe, dam.genes.pinstripe];
+  if (pins.includes('Quad-Stripe') && Math.random() < 0.45) offPin = 'Quad-Stripe';
+  else if (pins.includes('100% Full Pinstripe') || pins.includes('Quad-Stripe')) {
+    offPin = Math.random() < 0.6 ? '100% Full Pinstripe' : 'Partial';
+  } else if (pins.includes('Partial')) {
+    offPin = Math.random() < 0.4 ? 'Partial' : 'None';
+  }
+
+  // Red Pigment Lineage
+  const offRed = sire.genes.redPigment || dam.genes.redPigment ? (Math.random() < 0.55) : false;
+
+  return {
+    lilly: inheritCodom(sire.genes.lilly, dam.genes.lilly),
+    cappuccino: inheritCodom(sire.genes.cappuccino, dam.genes.cappuccino),
+    phantom: inheritCodom(sire.genes.phantom, dam.genes.phantom),
+    axanthic: inheritRecessive(sire.genes.axanthic, dam.genes.axanthic),
+    sable: inheritRecessive(sire.genes.sable, dam.genes.sable),
+    dalmatianGrade: offDal,
+    pinstripe: offPin,
+    redPigment: offRed
+  };
+}
+
+function evaluateOffspringPhenotypeString(g) {
+  if (g.lilly === 'HOMO') {
+    return '💀 Homozygous Super Lilly (Lethal Non-Viable)';
+  }
+  const isLilly = g.lilly === 'HET';
+  const isCap = g.cappuccino === 'HET';
+  const isSuperCap = g.cappuccino === 'HOMO';
+  const isAx = g.axanthic === 'VISUAL';
+  const isSable = g.sable === 'VISUAL';
+
+  if (isLilly && isCap) return "Frappuccino [Holy Grail]";
+  if (isSuperCap) return "Super Cappuccino / 'Espresso'";
+  if (isAx && isLilly) return "Axanthic Lilly White";
+  if (isAx && isCap) return "Mochanthic";
+  if (isAx && isSable) return "Dark Knight";
+  if (g.dalmatianGrade === 5 && g.redPigment) return "Red Ink Spot Super Dalmatian";
+
+  const parts = [];
+  if (isLilly) parts.push("Lilly White");
+  if (isCap) parts.push("Cappuccino");
+  if (isAx) parts.push("Axanthic");
+  if (isSable) parts.push("Sable");
+  if (g.dalmatianGrade >= 3) parts.push("Super Dalmatian");
+  if (g.pinstripe === '100% Full Pinstripe') parts.push("Full Pinstripe");
+  if (g.pinstripe === 'Quad-Stripe') parts.push("Quad-Stripe");
+
+  return parts.length ? parts.join(" ") : "Classic Wildtype";
+}
+
+// 1. DOSSIER RENDERING & SYSTEM
+function renderDossiers() {
+  const grid = document.getElementById('dossier-grid');
+  const search = document.getElementById('gecko-search').value.toLowerCase();
+  const sexFilter = document.getElementById('gecko-filter-sex').value;
+
+  const filtered = State.geckos.filter(g => {
+    if (sexFilter !== 'ALL' && g.sex !== sexFilter) return false;
+    if (search) {
+      const morph = g.morphPhenotype.toLowerCase();
+      const name = g.name.toLowerCase();
+      const sex = g.sex === 'M' ? 'male sire' : 'female dam';
+      if (!morph.includes(search) && !name.includes(search) && !sex.includes(search)) return false;
+    }
+    return true;
+  });
+
+  grid.innerHTML = filtered.map(gecko => {
+    const isSireReady = gecko.sex === 'M' && gecko.weight >= 38;
+    const isDamReady = gecko.sex === 'F' && gecko.weight >= 45;
+    const matureTag = (isSireReady || isDamReady) ? '<span class="tag-visual">MATURE BREEDER</span>' : '<span class="tag-het">GROWING JUVENILE</span>';
+
+    // Build visual and het badges
+    const tags = [];
+    if (gecko.isWorldFirst) tags.push('<span class="gene-tag tag-wf">🌟 WORLD\'S FIRST</span>');
+    if (gecko.genes.lilly === 'HET') tags.push('<span class="gene-tag tag-visual">Lilly White</span>');
+    if (gecko.genes.cappuccino === 'HET') tags.push('<span class="gene-tag tag-visual">Cappuccino</span>');
+    if (gecko.genes.cappuccino === 'HOMO') tags.push('<span class="gene-tag tag-visual">Super Cappuccino</span>');
+    if (gecko.genes.axanthic === 'VISUAL') tags.push('<span class="gene-tag tag-visual">Visual Axanthic</span>');
+    else if (gecko.genes.axanthic === 'HET') tags.push('<span class="gene-tag tag-het">100% Het Axanthic</span>');
+    if (gecko.genes.sable === 'VISUAL') tags.push('<span class="gene-tag tag-visual">Visual Sable</span>');
+    else if (gecko.genes.sable === 'HET') tags.push('<span class="gene-tag tag-het">100% Het Sable</span>');
+    if (gecko.genes.phantom !== 'NONE') tags.push('<span class="gene-tag tag-visual">Phantom</span>');
+    if (gecko.genes.dalmatianGrade > 0) tags.push(`<span class="gene-tag tag-lineage">Dalmatian Gr.${gecko.genes.dalmatianGrade}</span>`);
+    if (gecko.genes.pinstripe !== 'None') tags.push(`<span class="gene-tag tag-lineage">${gecko.genes.pinstripe}</span>`);
+    if (gecko.genes.redPigment) tags.push('<span class="gene-tag tag-lineage">Red Lineage</span>');
+
+    return `
+      <div class="dossier-card" id="card-${gecko.id}">
+        <div>
+          <div class="dossier-head">
+            <div>
+              <div class="dossier-name" onclick="renameGeckoPrompt('${gecko.id}')" title="Click to rename">
+                <span>${escapeHtml(gecko.name)}</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">✏️</span>
+              </div>
+              <div style="font-size: 0.7rem; color: #38bdf8; font-weight: 700; margin-top: 2px;">
+                ${escapeHtml(gecko.morphPhenotype)}
+              </div>
+            </div>
+            <span class="sex-badge ${gecko.sex === 'M' ? 'sex-m' : 'sex-f'}">
+              ${gecko.sex === 'M' ? '♂ SIRE' : '♀ DAM'}
+            </span>
+          </div>
+
+          <div class="dossier-body" style="margin-top: 8px;">
+            <div class="dossier-row">
+              <span class="text-muted">Weight / Age:</span>
+              <span class="font-bold">${gecko.weight.toFixed(1)}g | ${gecko.age}d</span>
+            </div>
+            <div class="dossier-row">
+              <span class="text-muted">Tail Anatomy:</span>
+              <span class="${gecko.tailLoss ? 'text-amber' : 'text-green'}">
+                ${gecko.tailLoss ? '⚡ Frogbutt (Autotomy)' : '✨ Original Complete'}
+              </span>
+            </div>
+            <div class="dossier-row">
+              <span class="text-muted">Shed Phase:</span>
+              <span class="${gecko.shedState === 'SHEDDING' ? 'text-amber' : 'text-cyan'}">${gecko.shedState}</span>
+            </div>
+
+            <!-- Hunger Meter -->
+            <div style="margin-top: 4px;">
+              <div class="dossier-row" style="font-size: 0.68rem;">
+                <span class="text-muted">Satiety (CGD):</span>
+                <span>${Math.round(gecko.hunger)}%</span>
+              </div>
+              <div class="progress-bar-wrap">
+                <div class="progress-fill ${gecko.hunger < 30 ? 'low' : ''}" style="width: ${gecko.hunger}%;"></div>
+              </div>
+            </div>
+
+            <div class="tag-container">
+              ${matureTag}
+              ${tags.join('')}
+            </div>
+
+            <div class="dossier-desc">
+              "${generateFlavorText(gecko)}"
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="dossier-row" style="margin-top: 6px; border-top: 1px dashed #24344d; padding-top: 4px;">
+            <span class="text-muted">Wholesale Valuation:</span>
+            <span class="text-green font-bold">$${gecko.marketValuation.toLocaleString()}</span>
+          </div>
+          <div class="dossier-actions">
+            <button class="btn btn-sm btn-warn" style="flex:1;" onclick="quickWholesaleGecko('${gecko.id}')">
+              ⚡ Quick Wholesale ($${Math.round(gecko.marketValuation * 0.75)})
+            </button>
+            <button class="btn btn-sm btn-primary" onclick="openConsignModalWithGecko('${gecko.id}')">
+              🏛️ Auction
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('tab-count-geckos').innerText = State.geckos.length;
+}
+
+function generateFlavorText(g) {
+  if (g.morphPhenotype.includes("Frappuccino")) return "Hypnotic contrast grail; elite creamy lateral coverage with supercharged dark base.";
+  if (g.morphPhenotype.includes("Super Cappuccino")) return "Translucent obsidian phenotype exhibiting intense melanistic sheen and complete pattern suppression.";
+  if (g.morphPhenotype.includes("Axanthic Lilly")) return "Pure monochrome porcelain frost; completely devoid of xanthophore yellow pigments.";
+  if (g.morphPhenotype.includes("Dark Knight")) return "High-end velvet black synergy between axanthic elimination and sable depth.";
+  if (g.morphPhenotype.includes("Super Dalmatian")) return "Heavily inked oil droplets across dorsal plane and lateral flanks.";
+  if (g.weight >= 45 && g.sex === 'F') return "Heavyweight gravid-ready breeder dam with excellent calcium reserve pockets.";
+  if (g.weight >= 38 && g.sex === 'M') return "High-vigor mature herd sire showing robust crest structure and active scent-marking.";
+  return "Healthy arboreal specimen acclimated to bioactive conditions.";
+}
+
+function renameGeckoPrompt(id) {
+  const g = State.geckos.find(x => x.id === id);
+  if (!g) return;
+  const newName = prompt(`Enter new registry designation for ${g.name}:`, g.name);
+  if (newName && newName.trim().length > 0) {
+    g.name = newName.trim();
+    saveGame();
+    renderDossiers();
+    showToast(`Gecko re-registered as: ${g.name}`);
+  }
+}
+
+function quickWholesaleGecko(id) {
+  const idx = State.geckos.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  const g = State.geckos[idx];
+  const payout = Math.round(g.marketValuation * 0.75);
+
+  if (confirm(`Immediately wholesale ${g.name} (${g.morphPhenotype}) to local wholesale pipeline for $${payout.toLocaleString()} cash?`)) {
+    State.cash += payout;
+    State.geckos.splice(idx, 1);
+    // Unpair from breeding array if present
+    State.breedingSlots.forEach(slot => {
+      if (slot.sireId === id) slot.sireId = null;
+      if (slot.damId === id) slot.damId = null;
+    });
+    saveGame();
+    renderAllViews();
+    showToast(`Wholesaled ${g.name} for +$${payout.toLocaleString()}`);
+  }
+}
+
+// 2. BREEDING ARRAY SYSTEM (5-SLOT PHYSICAL ENCLOSURES)
+function renderBreedingArray() {
+  const container = document.getElementById('breeding-array-slots');
+  container.innerHTML = State.breedingSlots.map((slot, index) => {
+    const sire = State.geckos.find(g => g.id === slot.sireId);
+    const dam = State.geckos.find(g => g.id === slot.damId);
+
+    let oddsData = null;
+    if (sire && dam) {
+      oddsData = simulatePunnettOdds(sire, dam, 400);
+    }
+
+    return `
+      <div class="breed-slot-card" id="slot-card-${slot.id}">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+          <span class="font-bold text-cyan">Vivarium Breeding Slot #${slot.id}</span>
+          ${slot.locked 
+            ? `<span class="brand-tag" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">🔒 Copulating (${slot.daysRemaining}d left)</span>`
+            : '<span class="brand-tag text-green">Ready to Pair</span>'}
+        </div>
+
+        <div class="pair-box">
+          <!-- Sire Slot -->
+          <div class="gecko-slot-select ${sire ? 'occupied' : ''}" onclick="selectBreederSlot(${slot.id}, 'M')">
+            ${sire ? `
+              <div class="font-bold text-cyan">${escapeHtml(sire.name)}</div>
+              <div style="font-size: 0.65rem;">${escapeHtml(sire.morphPhenotype)}</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted);">${sire.weight.toFixed(1)}g (Sire ♂)</div>
+              ${!slot.locked ? '<button class="btn btn-sm btn-danger" style="margin-top: 4px;" onclick="event.stopPropagation(); clearBreederSlot(' + slot.id + ', \'M\')">Remove</button>' : ''}
+            ` : `
+              <div style="color: var(--text-muted);">+ Assign Sire (♂)</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted);">(Weight >= 38g)</div>
+            `}
+          </div>
+
+          <!-- Dam Slot -->
+          <div class="gecko-slot-select ${dam ? 'occupied' : ''}" onclick="selectBreederSlot(${slot.id}, 'F')">
+            ${dam ? `
+              <div class="font-bold text-cyan">${escapeHtml(dam.name)}</div>
+              <div style="font-size: 0.65rem;">${escapeHtml(dam.morphPhenotype)}</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted);">${dam.weight.toFixed(1)}g (Dam ♀)</div>
+              ${!slot.locked ? '<button class="btn btn-sm btn-danger" style="margin-top: 4px;" onclick="event.stopPropagation(); clearBreederSlot(' + slot.id + ', \'F\')">Remove</button>' : ''}
+            ` : `
+              <div style="color: var(--text-muted);">+ Assign Dam (♀)</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted);">(Weight >= 45g)</div>
+            `}
+          </div>
+        </div>
+
+        <!-- Live Monte Carlo Punnett Preview -->
+        ${oddsData ? `
+          <div class="odds-preview-box">
+            <div style="font-weight: 700; color: #fff; margin-bottom: 4px; border-bottom: 1px dashed #334155; padding-bottom: 2px;">
+              🧬 Offspring Morph Forecast (% Odds):
+            </div>
+            ${oddsData.results.map(r => `
+              <div style="display: flex; justify-content: space-between; margin-bottom: 2px; color: ${r.isLethal ? '#f87171' : 'var(--text-secondary)'};">
+                <span>${r.morph}</span>
+                <span class="font-bold">${r.percent}%</span>
+              </div>
+            `).join('')}
+
+            ${parseFloat(oddsData.lethalRiskPercent) > 0 ? `
+              <div class="lethal-warning">
+                ⚠️ WARNING: ${oddsData.lethalRiskPercent}% Lethal Super Lilly risk! Non-viable embryos fail in incubator.
+              </div>
+            ` : ''}
+          </div>
+        ` : `
+          <div class="odds-preview-box" style="display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+            Pair a mature Sire and Dam to generate real-time genetic forecasts.
+          </div>
+        `}
+
+        <div>
+          ${!slot.locked ? `
+            <button class="btn btn-primary" style="width: 100%;" 
+                    ${(!sire || !dam) ? 'disabled' : ''} 
+                    onclick="lockInCopulation(${slot.id})">
+              💕 Lock Enclosure & Initiate 3-Day Copulation
+            </button>
+          ` : `
+            <button class="btn btn-warn" style="width: 100%;" disabled>
+              ⏳ In Copulation Chamber (${slot.daysRemaining} Sim Days Remaining)
+            </button>
+          `}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+let activePairSelecting = null;
+function selectBreederSlot(slotId, sex) {
+  const slot = State.breedingSlots.find(s => s.id === slotId);
+  if (slot.locked) {
+    showToast("This breeding enclosure is currently locked in copulation.", "warn");
+    return;
+  }
+  activePairSelecting = { slotId, sex };
+
+  const minWeight = sex === 'M' ? 38 : 45;
+  const eligible = State.geckos.filter(g => {
+    if (g.sex !== sex) return false;
+    if (g.weight < minWeight) return false;
+    // Check if assigned elsewhere
+    const inUse = State.breedingSlots.some(s => s.sireId === g.id || s.damId === g.id);
+    if (inUse) return false;
+    return true;
+  });
+
+  const listContainer = document.getElementById('pair-select-list');
+  document.getElementById('pair-select-title').innerText = `Select Mature ${sex === 'M' ? 'Sire (♂ >= 38g)' : 'Dam (♀ >= 45g)'}`;
+
+  if (eligible.length === 0) {
+    listContainer.innerHTML = `<div style="color: var(--text-muted); padding: 12px; text-align: center;">No eligible mature ${sex === 'M' ? 'sires (38g+)' : 'dams (45g+)'} available in vivarium inventory.</div>`;
+  } else {
+    listContainer.innerHTML = eligible.map(g => `
+      <div class="dossier-card" style="cursor: pointer;" onclick="assignBreederToSlot('${g.id}')">
+        <div class="dossier-head">
+          <span class="font-bold text-cyan">${escapeHtml(g.name)}</span>
+          <span class="font-bold">${g.weight.toFixed(1)}g</span>
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-secondary);">${escapeHtml(g.morphPhenotype)}</div>
+      </div>
+    `).join('');
+  }
+
+  openModal('modal-pair-select');
+}
+
+function assignBreederToSlot(geckoId) {
+  if (!activePairSelecting) return;
+  const slot = State.breedingSlots.find(s => s.id === activePairSelecting.slotId);
+  if (activePairSelecting.sex === 'M') {
+    slot.sireId = geckoId;
+  } else {
+    slot.damId = geckoId;
+  }
+  closeModal('modal-pair-select');
+  activePairSelecting = null;
+  saveGame();
+  renderBreedingArray();
+}
+
+function clearBreederSlot(slotId, sex) {
+  const slot = State.breedingSlots.find(s => s.id === slotId);
+  if (slot.locked) return;
+  if (sex === 'M') slot.sireId = null;
+  else slot.damId = null;
+  saveGame();
+  renderBreedingArray();
+}
+
+function lockInCopulation(slotId) {
+  const slot = State.breedingSlots.find(s => s.id === slotId);
+  if (!slot.sireId || !slot.damId) return;
+
+  slot.locked = true;
+  slot.daysRemaining = 3; // 3-day copulation lock
+  showToast(`Enclosure #${slot.id} locked in copulation for 3 sim days.`);
+  saveGame();
+  renderBreedingArray();
+}
+
+// AUTO-PAIR COMPATIBLE BREEDERS
+function autoPairCompatible() {
+  let pairedCount = 0;
+  const availableSires = State.geckos.filter(g => g.sex === 'M' && g.weight >= 38 && !State.breedingSlots.some(s => s.sireId === g.id));
+  const availableDams = State.geckos.filter(g => g.sex === 'F' && g.weight >= 45 && !State.breedingSlots.some(s => s.damId === g.id));
+
+  State.breedingSlots.forEach(slot => {
+    if (slot.locked) return;
+    if (!slot.sireId && availableSires.length > 0) {
+      slot.sireId = availableSires.shift().id;
+      pairedCount++;
+    }
+    if (!slot.damId && availableDams.length > 0) {
+      slot.damId = availableDams.shift().id;
+      pairedCount++;
+    }
+  });
+
+  saveGame();
+  renderBreedingArray();
+  showToast(`Auto-paired ${pairedCount} mature breeders into free enclosures.`);
+}
+
+// 3. INCUBATOR & CANDLING SYSTEM
+function renderIncubator() {
+  const container = document.getElementById('incubator-grid');
+  document.getElementById('tab-count-eggs').innerText = State.incubator.length;
+  document.getElementById('stat-eggs').innerText = State.incubator.length;
+
+  if (State.incubator.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 30px; font-family: var(--font-mono);">
+      Precision vermiculite incubator trays are empty. Pair geckos in the Breeding Array to harvest fertile clutches.
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = State.incubator.map(egg => {
+    return `
+      <div class="egg-cell ${egg.candled && egg.isLethal ? 'lethal' : ''}" id="egg-${egg.id}">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="font-bold">🥚 Egg #${egg.id.substr(-4)}</span>
+          <span style="font-size: 0.65rem; color: var(--text-muted);">${egg.daysLeft}d left</span>
+        </div>
+        <div class="egg-status-glow"></div>
+        <div style="font-size: 0.68rem; color: var(--text-secondary);">
+          Parentage: <span class="text-cyan">${escapeHtml(egg.parentSireName)}</span> × <span class="text-cyan">${escapeHtml(egg.parentDamName)}</span>
+        </div>
+        <div style="font-size: 0.68rem;">
+          ${egg.candled ? (
+            egg.isLethal 
+              ? '<span class="text-red font-bold">💀 Candled: Non-Viable Embryo (Super Lilly)</span>' 
+              : '<span class="text-green">✨ Candled: Fertile Target Embryo (Bullseye)</span>'
+          ) : '<span class="text-muted">Uncandled Clutch</span>'}
+        </div>
+        <div style="display: flex; gap: 4px; margin-top: 4px;">
+          <button class="btn btn-sm btn-primary" style="flex:1;" onclick="candleSingleEgg('${egg.id}')">🔦 Candle</button>
+          ${egg.candled && egg.isLethal ? `
+            <button class="btn btn-sm btn-danger" onclick="discardEgg('${egg.id}')">🗑️ Discard</button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function candleSingleEgg(eggId) {
+  const egg = State.incubator.find(e => e.id === eggId);
+  if (!egg) return;
+  egg.candled = true;
+  if (egg.isLethal) {
+    showToast(`Egg #${egg.id.substr(-4)} Candling Result: NON-VIABLE LETHAL (Homozygous Lilly White). Embryo arrested.`, 'warn');
+  } else {
+    showToast(`Egg #${egg.id.substr(-4)} Candling Result: Fertile! Vibrant red vascular spiderwebbing detected.`);
+  }
+  saveGame();
+  renderIncubator();
+}
+
+function candleAllEggs() {
+  let lethalFound = 0;
+  State.incubator.forEach(egg => {
+    egg.candled = true;
+    if (egg.isLethal) lethalFound++;
+  });
+  saveGame();
+  renderIncubator();
+  showToast(`Candled all ${State.incubator.length} eggs. ${lethalFound} non-viable lethal embryos identified.`);
+}
+
+function discardEgg(eggId) {
+  State.incubator = State.incubator.filter(e => e.id !== eggId);
+  saveGame();
+  renderIncubator();
+  showToast("Arrested non-viable egg discarded from vermiculite tray.");
+}
+
+function hatchReadyEggs() {
+  const ready = State.incubator.filter(e => e.daysLeft <= 0);
+  if (ready.length === 0) {
+    showToast("No eggs are fully incubated yet.", "warn");
+    return;
+  }
+
+  // Check capacity
+  const maxCap = FACILITY_TIERS[State.facilityTierIndex].max;
+  let hatchedCount = 0;
+
+  for (const egg of ready) {
+    if (State.geckos.length >= maxCap) {
+      showToast(`Facility reached capacity (${maxCap} vivs)! Upgrade racks to hatch more geckos.`, "warn");
+      break;
+    }
+
+    State.incubator = State.incubator.filter(e => e.id !== egg.id);
+
+    if (egg.isLethal) {
+      showToast(`Clutch Egg #${egg.id.substr(-4)} failed at pipping due to lethal Super Lilly genetics.`, "warn");
+      continue;
+    }
+
+    const baby = createGecko({
+      name: `Hatchling-${egg.parentDamName.substring(0, 3)}-${Math.floor(Math.random() * 900 + 100)}`,
+      sex: Math.random() < 0.5 ? "M" : "F",
+      age: 1,
+      weight: 2.3 + Math.random() * 0.4,
+      genes: egg.genes,
+      tailLoss: false
+    });
+
+    State.geckos.push(baby);
+    hatchedCount++;
+    showToast(`🐣 HATCH SUCCESS! Produced a ${baby.morphPhenotype} (${baby.name})!`);
+  }
+
+  saveGame();
+  renderAllViews();
+}
+
+// 4. 10-LANE PLAYER AUCTION FLOOR WITH ANTI-SNIPE & HYPE WARS
+function renderAuctionFloor() {
+  const grid = document.getElementById('auction-lanes-grid');
+  grid.innerHTML = State.auctionLanes.map(lane => {
+    const g = lane.gecko;
+    if (!g) {
+      return `
+        <div class="lane-card" style="opacity: 0.6; border-style: dashed; justify-content: center; align-items: center; min-height: 200px;">
+          <div style="color: var(--text-muted); font-weight: 700;">Lane #${lane.id} Empty</div>
+          <button class="btn btn-sm btn-warn" style="margin-top: 8px;" onclick="openConsignModalToLane(${lane.id})">
+            + Consign Gecko
+          </button>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="lane-card ${lane.isHypeWar ? 'hype-war' : ''}" id="lane-${lane.id}">
+        <div class="lane-top">
+          <span class="font-bold text-cyan">Lane #${lane.id} ${lane.isHypeWar ? '🔥 HYPE WAR' : ''}</span>
+          <span class="timer-badge ${lane.secondsLeft <= 3 ? 'snipe-danger' : ''}">
+            ⏱️ ${lane.secondsLeft}s
+          </span>
+        </div>
+
+        <div>
+          <div class="font-bold text-primary" style="font-size: 0.82rem;">${escapeHtml(g.name)}</div>
+          <div style="font-size: 0.72rem; color: #38bdf8;">${escapeHtml(g.morphPhenotype)}</div>
+          <div style="font-size: 0.68rem; color: var(--text-muted);">${g.weight.toFixed(1)}g | ${g.sex === 'M' ? '♂ Sire' : '♀ Dam'}</div>
+        </div>
+
+        <div style="background: #070a0f; padding: 6px; border-radius: 4px; border: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between;">
+            <span class="text-muted">High Bid:</span>
+            <span class="font-bold text-green">$${lane.currentBid.toLocaleString()}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.68rem;">
+            <span class="text-muted">Bidder:</span>
+            <span class="text-cyan">${lane.highestBidder || 'Opening Reserve'}</span>
+          </div>
+        </div>
+
+        <div class="bid-log">
+          ${lane.bidHistory.length ? lane.bidHistory.map(h => `<div>${h}</div>`).join('') : '<div>Awaiting opening syndicates...</div>'}
+        </div>
+
+        <div style="font-size: 0.65rem; color: var(--text-muted); text-align: center;">
+          Broker Commission: 8% on completion
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openConsignModal() {
+  openConsignModalToLane(null);
+}
+
+let targetConsignLane = null;
+function openConsignModalToLane(laneId) {
+  targetConsignLane = laneId;
+  const list = document.getElementById('consign-list');
+  // Geckos not in breeding and not in another lane
+  const available = State.geckos.filter(g => {
+    const inBreeding = State.breedingSlots.some(s => s.sireId === g.id || s.damId === g.id);
+    const inAuction = State.auctionLanes.some(l => l.gecko && l.gecko.id === g.id);
+    return !inBreeding && !inAuction;
+  });
+
+  if (available.length === 0) {
+    list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px;">No available geckos to consign. Ensure they are removed from breeding arrays.</div>`;
+  } else {
+    list.innerHTML = available.map(g => `
+      <div class="dossier-card" style="cursor: pointer;" onclick="consignGeckoConfirmed('${g.id}')">
+        <div class="dossier-head">
+          <span class="font-bold text-cyan">${escapeHtml(g.name)}</span>
+          <span class="text-green font-bold">Est. Value: $${g.marketValuation.toLocaleString()}</span>
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-secondary);">${escapeHtml(g.morphPhenotype)} (${g.weight.toFixed(1)}g)</div>
+      </div>
+    `).join('');
+  }
+
+  openModal('modal-consign');
+}
+
+function openConsignModalWithGecko(geckoId) {
+  const freeLane = State.auctionLanes.find(l => !l.gecko);
+  if (!freeLane) {
+    showToast("All 10 auction floor lanes are currently active. Await vacancy.", "warn");
+    return;
+  }
+  consignGeckoToLane(geckoId, freeLane.id);
+}
+
+function consignGeckoConfirmed(geckoId) {
+  let target = targetConsignLane ? State.auctionLanes.find(l => l.id === targetConsignLane) : State.auctionLanes.find(l => !l.gecko);
+  if (!target) {
+    showToast("No open auction floor lane available.", "warn");
+    closeModal('modal-consign');
+    return;
+  }
+  consignGeckoToLane(geckoId, target.id);
+  closeModal('modal-consign');
+}
+
+function consignGeckoToLane(geckoId, laneId) {
+  const lane = State.auctionLanes.find(l => l.id === laneId);
+  const gecko = State.geckos.find(g => g.id === geckoId);
+  if (!lane || !gecko) return;
+
+  const isHype = gecko.morphPhenotype.includes("Frappuccino") || 
+                     gecko.morphPhenotype.includes("Axanthic Lilly") || 
+                     gecko.morphPhenotype.includes("Super Cappuccino") || 
+                     gecko.isWorldFirst;
+
+  lane.gecko = gecko;
+  lane.currentBid = Math.round(gecko.marketValuation * 0.5); // reserve opening
+  lane.highestBidder = "Opening Reserve";
+  lane.secondsLeft = 24; // auction length
+  lane.bidHistory = [`[Lane Opened] Starting reserve: $${lane.currentBid.toLocaleString()}`];
+  lane.isHypeWar = isHype;
+
+  showToast(`Consigned ${gecko.name} to Auction Lane #${lane.id}${isHype ? ' [🔥 HYPE WAR DETECTED]!' : ''}`);
+  saveGame();
+  renderAuctionFloor();
+}
+
+// REAL-TIME AUCTION TICK ENGINE (RUNS EVERY SECOND)
+function tickAuctions() {
+  let changed = false;
+
+  State.auctionLanes.forEach(lane => {
+    if (!lane.gecko) return;
+
+    lane.secondsLeft--;
+    changed = true;
+
+    // AI Bidding Dynamics
+    // If hype war -> bids 2x more often
+    const bidChance = lane.isHypeWar ? 0.65 : 0.38;
+    if (Math.random() < bidChance && lane.secondsLeft > 0) {
+      const syndicate = SYNDICATES[Math.floor(Math.random() * SYNDICATES.length)];
+      const maxWilling = lane.gecko.marketValuation * syndicate.budgetMultiplier * (lane.isHypeWar ? 1.4 : 1.0);
+
+      if (lane.currentBid < maxWilling) {
+        const increment = Math.max(50, Math.round(lane.currentBid * (lane.isHypeWar ? 0.20 : 0.12)));
+        lane.currentBid += increment;
+        lane.highestBidder = syndicate.name;
+
+        // ANTI-SNIPE MECHANIC: Under or equal 3s -> extend by +3s!
+        if (lane.secondsLeft <= 3) {
+          lane.secondsLeft += 3;
+          lane.bidHistory.unshift(`[ANTI-SNIPE +3s] ${syndicate.name} bid $${lane.currentBid.toLocaleString()}`);
+        } else {
+          lane.bidHistory.unshift(`${syndicate.name} placed bid: $${lane.currentBid.toLocaleString()}`);
+        }
+
+        if (lane.bidHistory.length > 5) lane.bidHistory.pop();
+      }
+    }
+
+    // Auction Completed!
+    if (lane.secondsLeft <= 0) {
+      finalizeAuctionSale(lane);
+    }
+  });
+
+  if (changed) {
+    renderAuctionFloor();
+  }
+}
+
+function finalizeAuctionSale(lane) {
+  const soldGecko = lane.gecko;
+  const gross = lane.currentBid;
+  const commission = Math.round(gross * 0.08); // 8% commission
+  const net = gross - commission;
+
+  State.cash += net;
+
+  // Remove gecko from facility
+  State.geckos = State.geckos.filter(g => g.id !== soldGecko.id);
+
+  showToast(`🔨 HAMMER DOWN! Lane #${lane.id}: ${soldGecko.name} sold to ${lane.highestBidder} for $${gross.toLocaleString()} (Net: +$${net.toLocaleString()} after 8% broker fee)`);
+
+  // Reset lane
+  lane.gecko = null;
+  lane.currentBid = 0;
+  lane.highestBidder = null;
+  lane.secondsLeft = 0;
+  lane.bidHistory = [];
+  lane.isHypeWar = false;
+
+  saveGame();
+  renderAllViews();
+}
+
+// 5. DISTRESSED BARGAINS (70% - 95% OFF), CONTRACTS & LOCAL SHOPS
+function refreshBargains() {
+  State.bargains = [];
+
+  // Generate 2 distressed bargains
+  for (let i = 0; i < 2; i++) {
+    const isRare = Math.random() < 0.35;
+    const g = createGecko({
+      name: `Distressed-${Math.floor(Math.random() * 800 + 100)}`,
+      sex: Math.random() < 0.5 ? "M" : "F",
+      age: Math.floor(Math.random() * 200 + 50),
+      weight: 12 + Math.random() * 32,
+      genes: {
+        lilly: isRare ? 'HET' : (Math.random() < 0.25 ? 'HET' : 'NONE'),
+        cappuccino: isRare ? 'HET' : (Math.random() < 0.25 ? 'HET' : 'NONE'),
+        phantom: Math.random() < 0.2 ? 'HET' : 'NONE',
+        axanthic: Math.random() < 0.2 ? 'VISUAL' : (Math.random() < 0.3 ? 'HET' : 'NONE'),
+        sable: Math.random() < 0.15 ? 'VISUAL' : 'NONE',
+        dalmatianGrade: Math.floor(Math.random() * 5),
+        pinstripe: Math.random() < 0.3 ? '100% Full Pinstripe' : 'None',
+        redPigment: Math.random() < 0.3
+      },
+      tailLoss: Math.random() < 0.4
+    });
+
+    // 70% to 95% liquidation discount!
+    const discountRate = 0.70 + Math.random() * 0.25;
+    const dealPrice = Math.max(35, Math.round(g.marketValuation * (1 - discountRate)));
+
+    State.bargains.push({
+      gecko: g,
+      discountPercent: Math.round(discountRate * 100),
+      price: dealPrice
+    });
+  }
+
+  renderBargains();
+}
+
+function renderBargains() {
+  const container = document.getElementById('distressed-bargain-container');
+  if (!container) return;
+
+  container.innerHTML = State.bargains.map((item, idx) => {
+    const g = item.gecko;
+    return `
+      <div class="dossier-card" style="border-left: 4px solid var(--accent-red);">
+        <div class="dossier-head">
+          <div>
+            <span class="font-bold text-amber">${escapeHtml(g.name)}</span>
+            <div style="font-size: 0.7rem; color: #38bdf8;">${escapeHtml(g.morphPhenotype)}</div>
+          </div>
+          <span class="brand-tag" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">
+            -${item.discountPercent}% OFF LIQUIDATION
+          </span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-top: 4px;">
+          <span class="text-muted">Est Value: <strike>$${g.marketValuation.toLocaleString()}</strike></span>
+          <span class="font-bold text-green" style="font-size: 0.85rem;">Liquidation: $${item.price.toLocaleString()}</span>
+        </div>
+        <button class="btn btn-sm btn-success" style="margin-top: 6px;" onclick="buyDistressedBargain(${idx})">
+          ⚡ Snag Distressed Asset ($${item.price.toLocaleString()})
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+function buyDistressedBargain(idx) {
+  const item = State.bargains[idx];
+  if (!item) return;
+
+  const maxCap = FACILITY_TIERS[State.facilityTierIndex].max;
+  if (State.geckos.length >= maxCap) {
+    showToast(`Vivarium capacity full (${maxCap} max)! Upgrade racks first.`, "warn");
+    return;
+  }
+
+  if (State.cash < item.price) {
+    showToast(`Insufficient cash on hand ($${State.cash} < $${item.price}).`, "warn");
+    return;
+  }
+
+  State.cash -= item.price;
+  State.geckos.push(item.gecko);
+  State.bargains.splice(idx, 1);
+
+  showToast(`Bargain acquired! Saved $${(item.gecko.marketValuation - item.price).toLocaleString()} on ${item.gecko.name}!`);
+  saveGame();
+  renderAllViews();
+}
+
+function forceRefreshBargains() {
+  bargainTick = 10;
+  refreshBargains();
+  showToast("Market scanned for fresh breeder liquidations.");
+}
+
+// P2P CLIENT CONTRACTS
+function refreshContracts() {
+  State.p2pContracts = [
+    { id: 'c1', title: 'Axanthic Lineage Stock', targetTrait: 'Axanthic', minWeight: 25, reward: 2800, client: 'Altitude Genetics' },
+    { id: 'c2', title: 'High-Coverage Pinstripe Dams', targetTrait: 'Pinstripe', minWeight: 35, sex: 'F', reward: 1950, client: 'Pacific Herpetology' },
+    { id: 'c3', title: 'Super Dalmatian Ink Program', targetTrait: 'Dalmatian', minWeight: 20, reward: 2400, client: 'Dr. Vance Elite Line' }
+  ];
+  renderContracts();
+}
+
+function renderContracts() {
+  const container = document.getElementById('p2p-contract-container');
+  if (!container) return;
+
+  container.innerHTML = State.p2pContracts.map(c => `
+    <div class="dossier-card" style="border-left: 4px solid var(--accent-cyan);">
+      <div class="dossier-head">
+        <div>
+          <span class="font-bold text-cyan">${escapeHtml(c.title)}</span>
+          <div style="font-size: 0.68rem; color: var(--text-muted);">Client: ${c.client}</div>
+        </div>
+        <span class="font-bold text-green" style="font-size: 0.85rem;">+$${c.reward.toLocaleString()}</span>
+      </div>
+      <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 4px;">
+        Requirements: Must possess <span class="text-cyan font-bold">${c.targetTrait}</span> | Min ${c.minWeight}g ${c.sex ? `(${c.sex === 'M' ? '♂ Sire' : '♀ Dam'})` : ''}
+      </div>
+      <button class="btn btn-sm btn-primary" style="margin-top: 6px;" onclick="openContractSurrenderModal('${c.id}')">
+        📦 Fulfill Contract (Surrender Matching Specimen)
+      </button>
+    </div>
+  `).join('');
+}
+
+let activeContractFulfill = null;
+function openContractSurrenderModal(contractId) {
+  const contract = State.p2pContracts.find(c => c.id === contractId);
+  if (!contract) return;
+  activeContractFulfill = contract;
+
+  const eligible = State.geckos.filter(g => {
+    // In breeding or auction?
+    const inBreeding = State.breedingSlots.some(s => s.sireId === g.id || s.damId === g.id);
+    const inAuction = State.auctionLanes.some(l => l.gecko && l.gecko.id === g.id);
+    if (inBreeding || inAuction) return false;
+
+    if (g.weight < contract.minWeight) return false;
+    if (contract.sex && g.sex !== contract.sex) return false;
+
+    const morphLower = g.morphPhenotype.toLowerCase();
+    const traitLower = contract.targetTrait.toLowerCase();
+    return morphLower.includes(traitLower);
+  });
+
+  const list = document.getElementById('p2p-surrender-list');
+  if (eligible.length === 0) {
+    list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px;">No geckos in your vivariums match ${contract.targetTrait} (>= ${contract.minWeight}g).</div>`;
+  } else {
+    list.innerHTML = eligible.map(g => `
+      <div class="dossier-card" style="cursor: pointer;" onclick="fulfillContractConfirmed('${g.id}')">
+        <div class="dossier-head">
+          <span class="font-bold text-cyan">${escapeHtml(g.name)}</span>
+          <span class="font-bold">${g.weight.toFixed(1)}g</span>
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-secondary);">${escapeHtml(g.morphPhenotype)}</div>
+      </div>
+    `).join('');
+  }
+
+  openModal('modal-p2p-surrender');
+}
+
+function fulfillContractConfirmed(geckoId) {
+  if (!activeContractFulfill) return;
+  const gIdx = State.geckos.findIndex(g => g.id === geckoId);
+  if (gIdx === -1) return;
+
+  const surrendered = State.geckos[gIdx];
+  const payout = activeContractFulfill.reward;
+
+  State.cash += payout;
+  State.geckos.splice(gIdx, 1);
+  closeModal('modal-p2p-surrender');
+
+  showToast(`Contract fulfilled! Surrendered ${surrendered.name} to ${activeContractFulfill.client} for +$${payout.toLocaleString()} cash!`);
+  saveGame();
+  renderAllViews();
+}
+
+// 4 LOCAL EXOTIC PET SHOPS (WHOLESALE REPS & RAPID MICRO-AUCTIONS)
+function refreshLocalShopAuctions() {
+  State.localShops.forEach(shop => {
+    shop.auctionTimer = 10;
+    shop.activeAuction = createGecko({
+      name: `${shop.name.split(' ')[0]}-Bloodline`,
+      sex: Math.random() < 0.5 ? 'M' : 'F',
+      age: 180,
+      weight: 28 + Math.random() * 14,
+      genes: {
+        lilly: Math.random() < 0.25 ? 'HET' : 'NONE',
+        cappuccino: Math.random() < 0.25 ? 'HET' : 'NONE',
+        phantom: Math.random() < 0.25 ? 'HET' : 'NONE',
+        axanthic: Math.random() < 0.2 ? 'HET' : 'NONE',
+        sable: Math.random() < 0.15 ? 'HET' : 'NONE',
+        dalmatianGrade: Math.floor(Math.random() * 4),
+        pinstripe: Math.random() < 0.35 ? '100% Full Pinstripe' : 'None',
+        redPigment: Math.random() < 0.4
+      },
+      tailLoss: false
+    });
+    shop.activeAuction.currentBid = Math.round(shop.activeAuction.marketValuation * 0.45);
+  });
+  renderLocalShops();
+}
+
+function renderLocalShops() {
+  const container = document.getElementById('local-shops-grid');
+  if (!container) return;
+
+  container.innerHTML = State.localShops.map(shop => {
+    const micro = shop.activeAuction;
+    return `
+      <div class="shop-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
+          <span class="font-bold text-cyan">${shop.name}</span>
+          <span class="brand-tag">Rep: ${shop.rep}%</span>
+        </div>
+
+        <div style="font-size: 0.72rem; color: var(--text-secondary);">
+          Bulk Wholesale Purchases:
+        </div>
+        <div style="display: flex; gap: 4px;">
+          <button class="btn btn-sm btn-primary" style="flex:1;" onclick="sellBulkCartonToShop('${shop.id}')">
+            📦 Sell 25x Crickets (+$40)
+          </button>
+          <button class="btn btn-sm btn-success" style="flex:1;" onclick="sellIsopodCupToShop('${shop.id}')">
+            🪵 Starter Cup (+$85)
+          </button>
+        </div>
+
+        <div style="border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 4px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.72rem;">
+            <span class="text-amber font-bold">10s Micro-Auction</span>
+            <span class="font-bold text-cyan">⏱️ ${shop.auctionTimer}s</span>
+          </div>
+          <div style="font-size: 0.7rem; font-weight: 700; margin-top: 2px;">${micro.morphPhenotype}</div>
+          <div style="font-size: 0.68rem; color: var(--text-muted);">${micro.weight.toFixed(1)}g (${micro.sex === 'M' ? '♂ Sire' : '♀ Dam'})</div>
+          <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.72rem;">
+            <span class="text-muted">Current Bid:</span>
+            <span class="font-bold text-green">$${micro.currentBid.toLocaleString()}</span>
+          </div>
+          <button class="btn btn-sm btn-warn" style="width: 100%; margin-top: 6px;" onclick="bidMicroAuction('${shop.id}')">
+            ⚡ Quick Bid (+$${Math.round(micro.currentBid * 0.15 + 25)})
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function sellBulkCartonToShop(shopId) {
+  if (State.insects.crickets_half.count < 25) {
+    showToast("Need at least 25x 1/2\" Crickets to package a wholesale carton.", "warn");
+    return;
+  }
+  State.insects.crickets_half.count -= 25;
+  State.cash += 40;
+  showToast("Sold 25x insect carton to pet shop wholesaler for +$40!");
+  saveGame();
+  renderFeedersCompound();
+}
+
+function sellIsopodCupToShop(shopId) {
+  const zebra = State.isopods.find(i => i.id === 'zebra');
+  if (!zebra || zebra.count < 10) {
+    showToast("Need at least 10x Zebra isopods to harvest a starter culture cup.", "warn");
+    return;
+  }
+  zebra.count -= 10;
+  State.cash += 85;
+  showToast("Harvested & sold Bioactive Starter Culture Cup to pet shop for +$85!");
+  saveGame();
+  renderIsopods();
+}
+
+function bidMicroAuction(shopId) {
+  const shop = State.localShops.find(s => s.id === shopId);
+  const micro = shop.activeAuction;
+  const inc = Math.round(micro.currentBid * 0.15 + 25);
+  const total = micro.currentBid + inc;
+
+  if (State.cash < total) {
+    showToast(`Insufficient cash ($${State.cash} < $${total}).`, "warn");
+    return;
+  }
+
+  State.cash -= total;
+  micro.currentBid = total;
+  showToast(`Placed high bid of $${total.toLocaleString()} in ${shop.name} micro-auction!`);
+  renderLocalShops();
+}
+
+// 6. INSECT FEEDER COLONY & DIET PREP COMPOUND
+function renderFeedersCompound() {
+  const feederContainer = document.getElementById('feeder-colonies-list');
+  const dietContainer = document.getElementById('diet-smoothie-list');
+  document.getElementById('cgd-stock-count').innerText = State.cgdPortions;
+
+  feederContainer.innerHTML = Object.entries(State.insects).map(([key, col]) => `
+    <div class="dossier-card" style="margin-bottom: 0;">
+      <div class="dossier-head">
+        <span class="font-bold text-cyan">${col.name}</span>
+        <span class="font-bold text-green">${col.count} Count</span>
+      </div>
+      <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 4px;">
+        Unit Valuation: $${col.unitVal.toFixed(2)} | Breeder Colony Multiplier: Active
+      </div>
+      <div style="display: flex; gap: 6px; margin-top: 6px;">
+        <button class="btn btn-sm btn-primary" onclick="packageFeederCarton('${key}')">
+          📦 Pack 25x Wholesale (+25% Bonus)
+        </button>
+        <button class="btn btn-sm btn-success" onclick="feedColonyGrains('${key}')">
+          🌾 Feed Colony ($35)
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  const diets = [
+    { id: 'WATERMELON', name: 'Pangea Watermelon Smoothie', buff: 'Standard balanced diet', cost: 40, yield: 40 },
+    { id: 'FIG_INSECT', name: 'Fig & Insect Formula', buff: '+10% natural feeding enthusiasm', cost: 55, yield: 40 },
+    { id: 'PAPAYA', name: 'Papaya Tropical Blend', buff: '+10% digestion & hydration stability', cost: 50, yield: 40 },
+    { id: 'GROWTH_BREEDING', name: 'Growth & Breeding Formula', buff: '⚡ +20% Growth Rate & Egg Mineralization', cost: 85, yield: 35 }
+  ];
+
+  dietContainer.innerHTML = diets.map(d => `
+    <div class="dossier-card" style="${State.dietFormula === d.id ? 'border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.05);' : ''}">
+      <div class="dossier-head">
+        <span class="font-bold ${State.dietFormula === d.id ? 'text-cyan' : 'text-primary'}">${d.name}</span>
+        ${State.dietFormula === d.id ? '<span class="brand-tag text-green">ACTIVE IN FACILITY</span>' : ''}
+      </div>
+      <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 4px;">${d.buff}</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+        <span class="text-green font-bold">$${d.cost} / Batch (${d.yield} servings)</span>
+        <div style="display: flex; gap: 4px;">
+          <button class="btn btn-sm ${State.dietFormula === d.id ? 'btn-warn' : 'btn-primary'}" onclick="setActiveDiet('${d.id}')">
+            ${State.dietFormula === d.id ? 'Formulating' : 'Set as Facility Diet'}
+          </button>
+          <button class="btn btn-sm btn-success" onclick="mixDietBatch('${d.id}', ${d.cost}, ${d.yield})">
+            🥣 Mix Batch
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function packageFeederCarton(key) {
+  const col = State.insects[key];
+  if (col.count < col.packSize) {
+    showToast(`Need at least ${col.packSize} ${col.name} to box a wholesale crate.`, "warn");
+    return;
+  }
+  col.count -= col.packSize;
+  const payout = Math.round(col.packSize * col.unitVal * 1.25); // +25% bonus
+  State.cash += payout;
+  showToast(`Packaged 25x crate of ${col.name} with +25% packaging bonus! Earned +$${payout}!`);
+  saveGame();
+  renderFeedersCompound();
+}
+
+function feedColonyGrains(key) {
+  if (State.cash < 35) {
+    showToast("Need $35 cash to purchase organic grain substrate.", "warn");
+    return;
+  }
+  State.cash -= 35;
+  State.insects[key].count += Math.floor(Math.random() * 40 + 25);
+  showToast(`Colony fed! ${State.insects[key].name} population expanded!`);
+  saveGame();
+  renderFeedersCompound();
+}
+
+function setActiveDiet(formulaId) {
+  State.dietFormula = formulaId;
+  showToast(`Facility feeding regime set to: ${formulaId}`);
+  saveGame();
+  renderFeedersCompound();
+}
+
+function mixDietBatch(formulaId, cost, yieldCount) {
+  if (State.cash < cost) {
+    showToast(`Insufficient cash ($${State.cash} < $${cost}).`, "warn");
+    return;
+  }
+  State.cash -= cost;
+  State.cgdPortions += yieldCount;
+  showToast(`Blended batch! +${yieldCount} CGD portions added to facility prep fridge.`);
+  saveGame();
+  renderFeedersCompound();
+}
+
+// 7. BIOACTIVE ISOPODS
+function renderIsopods() {
+  const container = document.getElementById('isopods-grid');
+  container.innerHTML = State.isopods.map(iso => `
+    <div class="dossier-card" style="${iso.owned ? 'border-color: #059669;' : ''}">
+      <div class="dossier-head">
+        <span class="font-bold text-cyan">${iso.name}</span>
+        <span class="brand-tag ${iso.owned ? 'text-green' : 'text-muted'}">${iso.owned ? 'CULTURE ACTIVE' : 'UNACQUIRED'}</span>
+      </div>
+      <div style="font-size: 0.72rem; color: #fbbf24; margin-top: 4px;">
+        ⚡ Passive: ${iso.bonus}
+      </div>
+      <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">
+        Culture Colony Count: <span class="font-bold text-white">${iso.count} specimens</span>
+      </div>
+      <div style="margin-top: 8px;">
+        ${iso.owned ? `
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-sm btn-primary" style="flex:1;" onclick="splitIsopodCulture('${iso.id}')">
+              🪵 Split Culture (+15)
+            </button>
+            <button class="btn btn-sm btn-warn" style="flex:1;" onclick="sellIsopodStarterCup('${iso.id}')">
+              📦 Sell Cup (+$75)
+            </button>
+          </div>
+        ` : `
+          <button class="btn btn-sm btn-success" style="width: 100%;" onclick="buyIsopodCulture('${iso.id}', ${iso.starterPrice})">
+            🛒 Buy Starter Culture ($${iso.starterPrice})
+          </button>
+        `}
+      </div>
+    </div>
+  `).join('');
+}
+
+function buyIsopodCulture(id, price) {
+  if (State.cash < price) {
+    showToast(`Insufficient cash ($${State.cash} < $${price}).`, "warn");
+    return;
+  }
+  const iso = State.isopods.find(i => i.id === id);
+  State.cash -= price;
+  iso.owned = true;
+  iso.count = 20;
+  showToast(`Acquired ${iso.name} starter culture! Facility-wide passive unlocked.`);
+  saveGame();
+  renderIsopods();
+}
+
+function splitIsopodCulture(id) {
+  const iso = State.isopods.find(i => i.id === id);
+  iso.count += Math.floor(Math.random() * 15 + 10);
+  showToast(`Culture split into fresh organic leaf litter. ${iso.name} population expanded!`);
+  saveGame();
+  renderIsopods();
+}
+
+function sellIsopodStarterCup(id) {
+  const iso = State.isopods.find(i => i.id === id);
+  if (iso.count < 15) {
+    showToast(`Culture size too small (${iso.count} < 15). Allow colony to breed first.`, "warn");
+    return;
+  }
+  iso.count -= 10;
+  State.cash += 75;
+  showToast(`Harvested 10x ${iso.name} starter cup and shipped to client for +$75!`);
+  saveGame();
+  renderIsopods();
+}
+
+// 8. FACILITY EXPANSIONS (6 RACK TIERS) & TECH
+function renderFacility() {
+  const racksContainer = document.getElementById('facility-racks-list');
+  const techContainer = document.getElementById('tech-upgrades-list');
+  const currentTier = FACILITY_TIERS[State.facilityTierIndex];
+
+  document.getElementById('fac-current-cap').innerText = currentTier.max;
+  document.getElementById('facility-tier-label').innerText = `Tier ${currentTier.tier}: ${currentTier.name} (${currentTier.max} Vivariums)`;
+  document.getElementById('stat-capacity').innerText = `${State.geckos.length} / ${currentTier.max}`;
+
+  racksContainer.innerHTML = FACILITY_TIERS.map((tier, idx) => {
+    const isCurrent = idx === State.facilityTierIndex;
+    const isUnlocked = idx <= State.facilityTierIndex;
+    const isNext = idx === State.facilityTierIndex + 1;
+
+    return `
+      <div class="dossier-card" style="${isCurrent ? 'border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.05);' : ''}">
+        <div class="dossier-head">
+          <div>
+            <span class="font-bold text-cyan">Tier ${tier.tier}: ${tier.name}</span>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">${tier.max} Arboreal Vivariums Capacity</div>
+          </div>
+          ${isCurrent ? '<span class="brand-tag text-green">CURRENT FACILITY</span>' : ''}
+          ${isUnlocked && !isCurrent ? '<span class="brand-tag text-muted">COMPLETED</span>' : ''}
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+          <span class="font-bold text-green">${tier.cost === 0 ? 'Default Starter' : `$${tier.cost.toLocaleString()}`}</span>
+          ${isNext ? `
+            <button class="btn btn-sm btn-success" onclick="upgradeFacilityTier(${idx}, ${tier.cost})">
+              🏗️ Construct Expansion ($${tier.cost.toLocaleString()})
+            </button>
+          ` : (!isUnlocked ? '<span class="text-muted" style="font-size: 0.72rem;">Requires Prior Tier</span>' : '')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  techContainer.innerHTML = State.tech.map(tech => `
+    <div class="dossier-card" style="${tech.owned ? 'border-color: #059669;' : ''}">
+      <div class="dossier-head">
+        <span class="font-bold text-cyan">${tech.name}</span>
+        <span class="brand-tag ${tech.owned ? 'text-green' : 'text-muted'}">${tech.owned ? 'INSTALLED' : 'AVAILABLE'}</span>
+      </div>
+      <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 4px;">${tech.desc}</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+        <span class="font-bold text-green">$${tech.cost.toLocaleString()}</span>
+        ${tech.owned ? '<span class="text-green font-bold">ONLINE</span>' : `
+          <button class="btn btn-sm btn-primary" onclick="installTechUpgrade('${tech.id}', ${tech.cost})">
+            🛠️ Install Module ($${tech.cost.toLocaleString()})
+          </button>
+        `}
+      </div>
+    </div>
+  `).join('');
+}
+
+function upgradeFacilityTier(nextIdx, cost) {
+  if (State.cash < cost) {
+    showToast(`Insufficient cash ($${State.cash} < $${cost}).`, "warn");
+    return;
+  }
+  State.cash -= cost;
+  State.facilityTierIndex = nextIdx;
+  showToast(`Facility expanded to ${FACILITY_TIERS[nextIdx].name}! Capacity now ${FACILITY_TIERS[nextIdx].max} vivariums!`);
+  saveGame();
+  renderAllViews();
+}
+
+function installTechUpgrade(techId, cost) {
+  if (State.cash < cost) {
+    showToast(`Insufficient cash ($${State.cash} < $${cost}).`, "warn");
+    return;
+  }
+  State.cash -= cost;
+  const t = State.tech.find(x => x.id === techId);
+  t.owned = true;
+  showToast(`Tech module [${t.name}] operational across all facility enclosures!`);
+  saveGame();
+  renderFacility();
+}
+
+// 9. WORLD'S FIRST REGISTRY & HALL OF FAME
+function renderRegistry() {
+  const container = document.getElementById('registry-grid');
+  const entries = Object.entries(State.worldFirsts);
+
+  if (entries.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 30px; font-family: var(--font-mono);">
+      No World's First morphs registered yet. Breed rare combinatorial genetics (Frappuccinos, Axanthic Lilly Whites, Dark Knights) to claim global honors!
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = entries.map(([key, data]) => `
+    <div class="dossier-card" style="border: 2px solid var(--accent-gold); background: linear-gradient(180deg, rgba(251, 191, 36, 0.08) 0%, #090e17 100%);">
+      <div class="dossier-head">
+        <div>
+          <span class="font-bold text-gold" style="font-size: 0.85rem;">🌟 WORLD'S FIRST</span>
+          <div style="font-size: 0.8rem; color: #fff; font-weight: 800; margin-top: 2px;">${escapeHtml(key)}</div>
+        </div>
+        <span class="brand-tag text-gold">3.5x VALUE</span>
+      </div>
+      <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 6px;">
+        Pioneering Specimen: <span class="text-cyan font-bold">${escapeHtml(data.geckoName)}</span>
+      </div>
+      <div style="font-size: 0.7rem; color: var(--text-muted);">
+        Date Certified: Sim Day ${data.dayRegistered}
+      </div>
+      <div style="font-size: 0.72rem; color: var(--accent-green); margin-top: 4px; font-weight: 700;">
+        Syndicate Grant Paid: +$${data.bounty.toLocaleString()}
+      </div>
+    </div>
+  `).join('');
+}
+
+// 10. GOD MODE DEVELOPER CONSOLE
+function cheatAddCash(amt) {
+  State.cash += amt;
+  showToast(`[DEBUG CHEAT] Added +$${amt.toLocaleString()} Cash.`);
+  saveGame();
+  renderAllViews();
+}
+
+function cheatAddBank(amt) {
+  State.bank += amt;
+  showToast(`[DEBUG CHEAT] Added +$${amt.toLocaleString()} to Tycoon Bank.`);
+  saveGame();
+  renderAllViews();
+}
+
+function cheatInstantHatch() {
+  State.incubator.forEach(egg => egg.daysLeft = 0);
+  showToast("[DEBUG CHEAT] Fast-forwarded all clutches to 0 incubation days.");
+  hatchReadyEggs();
+}
+
+function cheatHealAll() {
+  State.geckos.forEach(g => {
+    g.hunger = 100;
+    g.shedState = 'PRIME';
+    g.shedDaysLeft = 0;
+  });
+  showToast("[DEBUG CHEAT] All facility geckos fully satiated (100%) and conditioned.");
+  saveGame();
+  renderDossiers();
+}
+
+function cheatSpawnBooster() {
+  const g = createGecko({
+    name: "Gene-Booster-" + Math.floor(Math.random() * 900 + 100),
+    sex: Math.random() < 0.5 ? "M" : "F",
+    age: 320,
+    weight: 46.5,
+    genes: {
+      lilly: 'HET',
+      cappuccino: 'HET',
+      phantom: 'NONE',
+      axanthic: 'HET',
+      sable: 'HET',
+      dalmatianGrade: 3,
+      pinstripe: '100% Full Pinstripe',
+      redPigment: true
+    },
+    tailLoss: false
+  });
+  State.geckos.push(g);
+  showToast(`[DEBUG CHEAT] Spawned 2-Gene Multi-Het Booster Breeder: ${g.name}!`);
+  saveGame();
+  renderAllViews();
+}
+
+function cheatMaxInsects() {
+  Object.values(State.insects).forEach(col => col.count += 500);
+  State.cgdPortions += 200;
+  showToast("[DEBUG CHEAT] All insect feeder colonies and CGD stores maximized (+500 count).");
+  saveGame();
+  renderFeedersCompound();
+}
+
+function cheatSpawnGrail(type) {
+  let g;
+  if (type === 'FRAPPUCCINO') {
+    g = createGecko({
+      name: "Grail-Frappuccino-" + Math.floor(Math.random() * 800 + 100),
+      sex: Math.random() < 0.5 ? "M" : "F",
+      age: 340,
+      weight: 48.0,
+      genes: {
+        lilly: 'HET',
+        cappuccino: 'HET',
+        phantom: 'NONE',
+        axanthic: 'NONE',
+        sable: 'NONE',
+        dalmatianGrade: 0,
+        pinstripe: '100% Full Pinstripe',
+        redPigment: false
+      },
+      tailLoss: false
+    });
+  } else {
+    g = createGecko({
+      name: "Espresso-SuperCap-" + Math.floor(Math.random() * 800 + 100),
+      sex: Math.random() < 0.5 ? "M" : "F",
+      age: 350,
+      weight: 49.0,
+      genes: {
+        lilly: 'NONE',
+        cappuccino: 'HOMO', // Super Cappuccino
+        phantom: 'NONE',
+        axanthic: 'NONE',
+        sable: 'NONE',
+        dalmatianGrade: 0,
+        pinstripe: 'None',
+        redPigment: false
+      },
+      tailLoss: false
+    });
+  }
+  State.geckos.push(g);
+  showToast(`[DEBUG CHEAT] Spawned Grail Specimen: ${g.morphPhenotype}!`);
+  saveGame();
+  renderAllViews();
+}
+
+// 11. STANDALONE PERSISTENCE & JSON EXPORT/RESTORE
+function saveGame() {
+  try {
+    localStorage.setItem('crestielab_save_state', JSON.stringify(State));
+  } catch (err) {
+    console.error("Local storage save error:", err);
+  }
+  updateGlobalMetrics();
+}
+
+function loadSavedGame() {
+  try {
+    const raw = localStorage.getItem('crestielab_save_state');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      State = Object.assign(State, parsed);
+    }
+  } catch (err) {
+    console.warn("Could not load save, initializing clean state:", err);
+  }
+}
+
+function exportSaveJSON() {
+  const json = JSON.stringify(State, null, 2);
+  const ta = document.getElementById('save-data-textarea');
+  ta.value = json;
+  ta.select();
+  showToast("Facility JSON state exported to text box. Copy and store securely!");
+}
+
+function importSaveJSON() {
+  const ta = document.getElementById('save-data-textarea');
+  if (!ta.value.trim()) {
+    showToast("Paste valid JSON backup string into the box first.", "warn");
+    return;
+  }
+  try {
+    const imported = JSON.parse(ta.value.trim());
+    if (imported && imported.geckos) {
+      State = imported;
+      saveGame();
+      renderAllViews();
+      showToast("Facility state successfully restored from JSON backup!");
+    } else {
+      showToast("Invalid save data structure.", "warn");
+    }
+  } catch (err) {
+    showToast("JSON parsing error: " + err.message, "warn");
+  }
+}
+
+function wipeSaveData() {
+  if (confirm("⚠️ FACTORY RESET: Are you sure you want to permanently erase all facility records, geckos, and funds?")) {
+    localStorage.removeItem('crestielab_save_state');
+    location.reload();
+  }
+}
+
+// MASS ACTIONS (MASS FEED & MIST)
+function feedAllGeckos() {
+  const costPerGecko = State.tech.find(t => t.id === 'cgd_logistics').owned ? 6 : 15;
+  const totalCost = State.geckos.length * costPerGecko;
+
+  if (State.cash < totalCost) {
+    showToast(`Need $${totalCost} cash to feed all ${State.geckos.length} geckos ($${costPerGecko}/ea).`, "warn");
+    return;
+  }
+
+  State.cash -= totalCost;
+  State.geckos.forEach(g => {
+    g.hunger = Math.min(100, g.hunger + 45);
+    // Growth bonus if on growth diet
+    if (State.dietFormula === 'GROWTH_BREEDING' && g.weight < 45) {
+      g.weight = Math.min(55, Math.round((g.weight + 0.35) * 10) / 10);
+    }
+  });
+
+  showToast(`Mass fed ${State.geckos.length} geckos for -$${totalCost} cash! Satiety replenished.`);
+  saveGame();
+  renderDossiers();
+}
+
+function mistAllGeckos() {
+  State.geckos.forEach(g => {
+    if (g.shedState === 'SHEDDING') {
+      g.shedState = 'PRIME';
+      g.shedDaysLeft = 0;
+    }
+  });
+  showToast("Arboreal mist arrays activated. Enclosure relative humidity raised to 95%.");
+  saveGame();
+  renderDossiers();
+}
+
+// TIME & SIMULATION TICK ADVANCEMENT
+function advanceDay(days = 1) {
+  for (let d = 0; d < days; d++) {
+    State.day++;
+
+    // Magic potion isopod passive income
+    const magicPotion = State.isopods.find(i => i.id === 'magic_potion');
+    if (magicPotion && magicPotion.owned) {
+      State.cash += 75;
+    }
+
+    // Isopod passives
+    const lava = State.isopods.find(i => i.id === 'lava');
+    const hungerDrain = (lava && lava.owned) ? 4.5 : 6.5;
+
+    const clown = State.isopods.find(i => i.id === 'clown');
+    const weightGainMultiplier = (clown && clown.owned) ? 1.15 : 1.0;
+
+    // Tick Geckos
+    State.geckos.forEach(g => {
+      g.age++;
+      g.hunger = Math.max(0, g.hunger - hungerDrain);
+
+      // Juvenile growth
+      if (g.weight < 48) {
+        let dailyGain = (g.hunger > 40 ? 0.12 : 0.03) * weightGainMultiplier;
+        g.weight = Math.min(55, Math.round((g.weight + dailyGain) * 10) / 10);
+      }
+
+      // Shedding cycle
+      const zebra = State.isopods.find(i => i.id === 'zebra');
+      if (g.shedState === 'PRIME' && Math.random() < 0.08) {
+        g.shedState = (zebra && zebra.owned) ? 'PRIME' : 'SHEDDING';
+        g.shedDaysLeft = 2;
+      } else if (g.shedState === 'SHEDDING') {
+        g.shedDaysLeft--;
+        if (g.shedDaysLeft <= 0) {
+          g.shedState = 'PRIME';
+        }
+      }
+
+      // Re-evaluate value
+      g.marketValuation = calculateGeckoValue(g);
+    });
+
+    // Tick Breeding Slots
+    State.breedingSlots.forEach(slot => {
+      if (!slot.locked) return;
+      slot.daysRemaining--;
+
+      if (slot.daysRemaining <= 0) {
+        // Copulation completed -> Dam lays clutch!
+        const sire = State.geckos.find(g => g.id === slot.sireId);
+        const dam = State.geckos.find(g => g.id === slot.damId);
+
+        if (sire && dam) {
+          // Check Rubber Ducky isopod passive (+2 clutch eggs)
+          const ducky = State.isopods.find(i => i.id === 'rubber_ducky');
+          const clutchSize = (ducky && ducky.owned) ? 4 : 2;
+
+          // Check White Pigeon isopod passive (-3 days incubation)
+          const pigeon = State.isopods.find(i => i.id === 'white_pigeon');
+          const baseIncDays = 18 - ((pigeon && pigeon.owned) ? 3 : 0);
+
+          for (let eggIdx = 0; eggIdx < clutchSize; eggIdx++) {
+            const offspringGenetics = generateOffspringGenes(sire, dam);
+            const isLethal = offspringGenetics.lilly === 'HOMO';
+
+            State.incubator.push({
+              id: uuid(),
+              parentSireName: sire.name,
+              parentDamName: dam.name,
+              genes: offspringGenetics,
+              isLethal: isLethal,
+              candled: false,
+              daysLeft: baseIncDays
+            });
+          }
+
+          showToast(`🥚 CLUTCH LAID! ${dam.name} laid ${clutchSize} eggs with ${sire.name}! Transferred to incubator.`);
+        }
+
+        // Release lock
+        slot.locked = false;
+        slot.daysRemaining = 0;
+      }
+    });
+
+    // Tick Incubator Eggs
+    State.incubator.forEach(egg => {
+      if (egg.daysLeft > 0) egg.daysLeft--;
+    });
+
+    // Tick Insect Colony Reproduction (Every 3 Days)
+    if (State.day % 3 === 0) {
+      Object.values(State.insects).forEach(col => {
+        col.count += Math.floor(col.count * 0.15 + 10);
+      });
+      showToast("🪲 Feeder insects completed a 3-day reproduction cycle!");
+    }
+  }
+
+  saveGame();
+  renderAllViews();
+}
+
+function toggleSimulation() {
+  State.simRunning = !State.simRunning;
+  const btn = document.getElementById('btn-pause-toggle');
+  if (State.simRunning) {
+    btn.innerHTML = "⏸️ Pause";
+    btn.classList.remove('btn-warn');
+  } else {
+    btn.innerHTML = "▶️ Resume";
+    btn.classList.add('btn-warn');
+  }
+}
+
+function startSimulationLoops() {
+  // Day tick every 6 seconds if simRunning
+  simInterval = setInterval(() => {
+    if (State.simRunning) {
+      advanceDay(1);
+    }
+  }, 6000);
+
+  // Auction second tick every 1000ms
+  auctionTickInterval = setInterval(() => {
+    if (State.simRunning) {
+      tickAuctions();
+
+      // Local pet shops micro auctions countdown
+      State.localShops.forEach(shop => {
+        if (shop.auctionTimer > 0) {
+          shop.auctionTimer--;
+          if (shop.auctionTimer <= 0) {
+            // Check if player won
+            showToast(`Pet shop [${shop.name}] micro-auction ended! Re-listing new bloodline...`);
+            shop.auctionTimer = 10;
+            shop.activeAuction = createGecko({
+              name: `${shop.name.split(' ')[0]}-Lineage`,
+              sex: Math.random() < 0.5 ? 'M' : 'F',
+              age: 190,
+              weight: 30 + Math.random() * 12,
+              genes: {
+                lilly: Math.random() < 0.3 ? 'HET' : 'NONE',
+                cappuccino: Math.random() < 0.3 ? 'HET' : 'NONE',
+                phantom: Math.random() < 0.2 ? 'HET' : 'NONE',
+                axanthic: Math.random() < 0.25 ? 'HET' : 'NONE',
+                sable: Math.random() < 0.15 ? 'HET' : 'NONE',
+                dalmatianGrade: Math.floor(Math.random() * 4),
+                pinstripe: 'Partial',
+                redPigment: Math.random() < 0.4
+              },
+              tailLoss: false
+            });
+            shop.activeAuction.currentBid = Math.round(shop.activeAuction.marketValuation * 0.45);
+            renderLocalShops();
+          }
+        }
+      });
+
+      // Distressed bargain bin timer countdown
+      bargainTick--;
+      const timerEl = document.getElementById('bargain-refresh-timer');
+      if (timerEl) timerEl.innerText = `${bargainTick}s`;
+      if (bargainTick <= 0) {
+        bargainTick = 10;
+        refreshBargains();
+      }
+    }
+  }, 1000);
+}
+
+// UI VIEW NAVIGATION & HELPERS
+function switchTab(viewId) {
+  document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+  const targetView = document.getElementById('view-' + viewId);
+  if (targetView) targetView.classList.add('active');
+
+  const buttons = Array.from(document.querySelectorAll('.tab-btn'));
+  const activeBtn = buttons.find(b => b.getAttribute('onclick')?.includes(viewId));
+  if (activeBtn) activeBtn.classList.add('active');
+
+  renderAllViews();
+}
+
+function updateGlobalMetrics() {
+  document.getElementById('stat-cash').innerText = `$${State.cash.toLocaleString()}`;
+  document.getElementById('stat-bank').innerText = `$${State.bank.toLocaleString()}`;
+  const maxCap = FACILITY_TIERS[State.facilityTierIndex].max;
+  document.getElementById('stat-capacity').innerText = `${State.geckos.length} / ${maxCap}`;
+  document.getElementById('stat-eggs').innerText = State.incubator.length;
+  document.getElementById('stat-day').innerText = `Day ${State.day}`;
+}
+
+function renderAllViews() {
+  updateGlobalMetrics();
+  renderDossiers();
+  renderBreedingArray();
+  renderIncubator();
+  renderAuctionFloor();
+  renderBargains();
+  renderContracts();
+  renderLocalShops();
+  renderFeedersCompound();
+  renderIsopods();
+  renderFacility();
+  renderRegistry();
+}
+
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('active');
+}
+
+function showToast(msg, type = "info") {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  if (type === 'warn') toast.style.borderColor = 'var(--accent-red)';
+  toast.innerText = msg;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.4s ease';
+    setTimeout(() => toast.remove(), 400);
+  }, 3400);
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+</script>
+</body>
+</html>
